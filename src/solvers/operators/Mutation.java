@@ -12,7 +12,7 @@ public abstract class Mutation implements Operator {
     }
 
     @Override
-    public List<Schedule> run(List<Schedule> schedules) {
+    public List<Schedule> call(List<Schedule> schedules) {
         for (Schedule schedule : schedules) {
             mutation(schedule);
         }

@@ -11,7 +11,7 @@ import static java.lang.Math.max;
 public class OrderRepair implements Operator {
 
     @Override
-    public List<Schedule> run(List<Schedule> schedules) {
+    public List<Schedule> call(List<Schedule> schedules) {
         List<Schedule> newSchedules = new ArrayList<>();
         for (Schedule schedule : schedules) {
             List<Task> tasks = schedule.getTasks();

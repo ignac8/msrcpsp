@@ -6,24 +6,26 @@ import solvers.operators.Operator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.shuffle;
 import static utils.FileUtils.saveGraphToFile;
 import static utils.FileUtils.saveScheduleToFile;
 
-public class Solver {
+public class Solver implements Callable<Schedule> {
 
-    List<Schedule> schedules;
-    List<Operator> operators;
-    int passCounter;
-    int passLimit;
-    long timeStart;
-    long timeLimit;
-    Schedule bestSchedule;
-    List<Result> results;
+    private List<Schedule> schedules;
+    private List<Operator> operators;
+    private int passCounter;
+    private int passLimit;
+    private long timeStart;
+    private long timeLimit;
+    private Schedule bestSchedule;
+    private List<Result> results;
+    private String filename;
 
-    public Solver(Schedule defaultSchedule, int populationSize, List<Operator> operators, int passLimit, long timeLimit) {
+    public Solver(Schedule defaultSchedule, int populationSize, List<Operator> operators, int passLimit, long timeLimit, String filename) {
         schedules = new ArrayList<>(populationSize);
         results = new ArrayList<>();
         for (int counter = 0; counter < populationSize; counter++) {
@@ -35,16 +37,19 @@ public class Solver {
         timeStart = currentTimeMillis();
         this.passLimit = passLimit;
         this.timeLimit = timeLimit;
+        this.filename = filename;
     }
 
-    public Schedule run() {
+    public Schedule call() {
         initialize();
         while (!done()) {
             for (Operator operator : operators) {
-                schedules = operator.run(schedules);
+                schedules = operator.call(schedules);
             }
             calculate();
         }
+        graph();
+        save();
         return bestSchedule;
     }
 
@@ -73,11 +78,11 @@ public class Solver {
         return currentTimeMillis() - timeStart > timeLimit || passCounter++ > passLimit;
     }
 
-    public void graph(String filename) {
+    private void graph() {
         saveGraphToFile(results, filename);
     }
 
-    public void save(String filename) {
+    private void save() {
         saveScheduleToFile(bestSchedule, filename);
     }
 }

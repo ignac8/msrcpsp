@@ -16,7 +16,7 @@ public class TournamentSelection implements Operator {
     }
 
     @Override
-    public List<Schedule> run(List<Schedule> schedules) {
+    public List<Schedule> call(List<Schedule> schedules) {
         int numberOfSchedules = schedules.size();
         List<Schedule> newList = new ArrayList<>();
         for (int outerCounter = 0; outerCounter < numberOfSchedules; outerCounter++) {

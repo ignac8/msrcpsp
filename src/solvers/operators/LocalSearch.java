@@ -10,7 +10,7 @@ import static java.util.Collections.sort;
 public class LocalSearch implements Operator {
 
     @Override
-    public List<Schedule> run(List<Schedule> schedules) {
+    public List<Schedule> call(List<Schedule> schedules) {
         for (int counter = 0; counter < schedules.size(); counter++) {
             Schedule schedule = schedules.get(counter);
             List<Schedule> neighbours = schedule.generateNeighbours();

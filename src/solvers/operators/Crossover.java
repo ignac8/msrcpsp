@@ -14,7 +14,7 @@ public abstract class Crossover implements Operator {
     }
 
     @Override
-    public List<Schedule> run(List<Schedule> schedules) {
+    public List<Schedule> call(List<Schedule> schedules) {
         for (int counter = 0; counter < schedules.size() - 1; counter += 2) {
             Schedule firstSchedule = schedules.get(counter);
             Schedule secondSchedule = schedules.get(counter + 1);
