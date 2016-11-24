@@ -9,6 +9,10 @@ import static java.util.Collections.sort;
 
 public class UnknownSearch extends LocalSearch {
 
+    public UnknownSearch(int size) {
+        super(size);
+    }
+
     @Override
     protected Schedule choose(List<Schedule> neighbours, Schedule previousSchedule) {
         shuffle(neighbours);

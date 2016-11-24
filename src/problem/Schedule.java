@@ -8,6 +8,8 @@ import java.util.List;
 import static java.lang.Double.compare;
 import static java.lang.Math.max;
 import static java.util.Collections.swap;
+import static org.apache.commons.lang3.RandomUtils.nextBoolean;
+import static org.apache.commons.lang3.RandomUtils.nextInt;
 
 public class Schedule implements Comparable<Schedule> {
 
@@ -175,7 +177,7 @@ public class Schedule implements Comparable<Schedule> {
 
     public void assignRandomResourceToTask(Task task) {
         List<Resource> listOfPermittedResources = task.getPermittedResources(resources);
-        Resource randomResource = listOfPermittedResources.get(RandomUtils.nextInt(0, listOfPermittedResources.size()));
+        Resource randomResource = listOfPermittedResources.get(nextInt(0, listOfPermittedResources.size()));
         task.setResource(randomResource);
     }
 
@@ -208,6 +210,15 @@ public class Schedule implements Comparable<Schedule> {
         return schedules;
     }
 
+    public List<Schedule> generateRandomNeighbours(int size) {
+        List<Schedule> schedules = new ArrayList<>();
+        for (int counter = 0; counter < size; counter++) {
+            Schedule schedule = nextBoolean() ? generateRandomNeighbourByOrder() : generateRandomNeighbourByResource();
+            schedules.add(schedule);
+        }
+        return schedules;
+    }
+
     private List<Schedule> generateNeighboursByResource(List<Schedule> schedules) {
         for (int counter = 0; counter < tasks.size(); counter++) {
             Schedule prevSchedule = new Schedule(this);
@@ -223,7 +234,7 @@ public class Schedule implements Comparable<Schedule> {
             List<Resource> prevPermittedResources = prevTask.getPermittedResources(prevResources);
             List<Resource> nextPermittedResources = nextTask.getPermittedResources(nextResources);
             int id = permittedResources.indexOf(task.getResource());
-            Resource prevResource = prevPermittedResources.get((id + 1) % prevPermittedResources.size());
+            Resource prevResource = prevPermittedResources.get((id - 1) % prevPermittedResources.size());
             Resource nextResource = nextPermittedResources.get((id + 1) % nextPermittedResources.size());
             prevTask.setResource(prevResource);
             nextTask.setResource(nextResource);
@@ -233,6 +244,22 @@ public class Schedule implements Comparable<Schedule> {
         return schedules;
     }
 
+    private Schedule generateRandomNeighbourByResource() {
+        Schedule clonedSchedule = new Schedule(this);
+        List<Task> clonedTasks = clonedSchedule.getTasks();
+        int randomTaskId = nextInt(0, tasks.size());
+        Task task = tasks.get(randomTaskId);
+        Task clonedTask = clonedTasks.get(randomTaskId);
+        List<Resource> clonedResources = clonedSchedule.getResources();
+        List<Resource> permittedResources = task.getPermittedResources(this.resources);
+        List<Resource> clonedPermittedResources = clonedTask.getPermittedResources(clonedResources);
+        int resourceId = permittedResources.indexOf(task.getResource());
+        int shift = nextBoolean() ? -1 : 1;
+        Resource clonedResource = clonedPermittedResources.get((resourceId + shift) % clonedPermittedResources.size());
+        clonedTask.setResource(clonedResource);
+        return clonedSchedule;
+    }
+
     private List<Schedule> generateNeighboursByOrder(List<Schedule> schedules) {
         for (int counter = 0; counter < tasks.size(); counter++) {
             Schedule clonedSchedule = new Schedule(this);
@@ -240,6 +267,13 @@ public class Schedule implements Comparable<Schedule> {
             schedules.add(clonedSchedule);
         }
         return schedules;
+    }
+
+    private Schedule generateRandomNeighbourByOrder() {
+        Schedule clonedSchedule = new Schedule(this);
+        int randomIndex = nextInt(0, tasks.size());
+        swap(clonedSchedule.getTasks(), randomIndex % tasks.size(), (randomIndex + 1) % tasks.size());
+        return clonedSchedule;
     }
 
     public boolean isSame(Schedule otherSchedule) {

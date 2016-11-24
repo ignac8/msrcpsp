@@ -9,11 +9,17 @@ import static java.util.Collections.sort;
 
 public class LocalSearch implements Operator {
 
+    private int size;
+
+    public LocalSearch(int size) {
+        this.size = size;
+    }
+
     @Override
     public List<Schedule> call(List<Schedule> schedules) {
         for (int counter = 0; counter < schedules.size(); counter++) {
             Schedule schedule = schedules.get(counter);
-            List<Schedule> neighbours = schedule.generateNeighbours();
+            List<Schedule> neighbours = schedule.generateRandomNeighbours(size);
             for (Schedule neighbour : neighbours) {
                 neighbour.calculate();
             }

@@ -1,6 +1,5 @@
 package solvers.operators;
 
-import org.apache.commons.lang3.RandomUtils;
 import problem.Schedule;
 
 import java.util.List;
@@ -14,7 +13,8 @@ public class SimulatedAnnealing extends LocalSearch {
     private double currTemp;
     private double decTemp;
 
-    public SimulatedAnnealing(double decTemp, double maxTemp) {
+    public SimulatedAnnealing(int size, double decTemp, double maxTemp) {
+        super(size);
         this.decTemp = decTemp;
         this.currTemp = maxTemp;
     }

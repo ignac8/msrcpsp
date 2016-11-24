@@ -1,6 +1,7 @@
 package solvers.operators;
 
 import com.google.common.collect.EvictingQueue;
+import org.apache.commons.math3.util.Precision;
 import problem.Schedule;
 
 import java.util.Iterator;
@@ -9,12 +10,15 @@ import java.util.List;
 import static java.util.Collections.shuffle;
 import static java.util.Collections.sort;
 
-public class TabuSearch extends LocalSearch implements Operator {
+public class TabooValueSearch extends LocalSearch implements Operator {
 
-    private EvictingQueue<Schedule> tabu;
+    private EvictingQueue<Double> taboo;
+    private double eps;
 
-    public TabuSearch(int size) {
-        tabu = EvictingQueue.create(size);
+    public TabooValueSearch(int size, int tabooSize, double eps) {
+        super(size);
+        this.taboo = EvictingQueue.create(tabooSize);
+        this.eps = eps;
     }
 
     @Override
@@ -25,21 +29,21 @@ public class TabuSearch extends LocalSearch implements Operator {
         for (int counter = 0; counter < neighbours.size() && chosenSchedule == null; counter++) {
             Schedule proposedSchedule = neighbours.get(counter);
             boolean found = false;
-            Iterator<Schedule> iterator = tabu.iterator();
+            Iterator<Double> iterator = taboo.iterator();
             while (iterator.hasNext() && !found) {
-                Schedule tabuSchedule = iterator.next();
-                if (tabuSchedule.isSame(proposedSchedule)) {
+                Double tabooSchedule = iterator.next();
+                if (Precision.compareTo(tabooSchedule, proposedSchedule.getFitness(), eps) == 0) {
                     found = true;
                 }
             }
             if (!found) {
                 chosenSchedule = proposedSchedule;
-                tabu.add(chosenSchedule);
+                taboo.add(chosenSchedule.getFitness());
             }
         }
         if (chosenSchedule == null) {
             chosenSchedule = previousSchedule;
-            tabu.poll();
+            taboo.poll();
         }
         return chosenSchedule;
     }
