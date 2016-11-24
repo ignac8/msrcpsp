@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="objenesis-2.1">
+  <library name="commons-lang3-3.5">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/objenesis-2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-lang3-3.5.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
