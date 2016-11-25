@@ -4,8 +4,7 @@ results/**
 graphs/**
 out/**
 java.hprof.txt
-graphsbak/*
-resultsNew/*
+graphsbak/**
+resultsNew/**
 doc/~*.tmp
-doc/~$t*
 doc/~$*

@@ -1,0 +1,15 @@
+y=e^((min-max)/x)
+d=min-max
+y=e^(d/x)
+
+log5(25)=2
+5^2=25
+loga(b)=c
+a^c=b
+b=a^c
+
+y=e^(d/x)
+ln(y)=d/x
+x=d/ln(y)
+
+z
