@@ -1,7 +1,3 @@
-﻿Dodać rozdzielenie na jednorazowe
+﻿Mersenne twister
 Poprawić local searcha, żeby działał poprawnie na kilku naraz
-Zotymalizować local searcha
-Poprawić tabu search, aby działało sensowniej
-Zrobić stupid local search
-Mersenne twister
-Poprawa funkcji temperatury
+Dodać rozdzielenie na jednorazowe
