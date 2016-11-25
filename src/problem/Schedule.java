@@ -3,10 +3,13 @@ package problem;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
 import static java.lang.Double.compare;
+import static java.lang.Math.floorMod;
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.util.Collections.swap;
 import static org.apache.commons.lang3.RandomUtils.nextBoolean;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
@@ -255,7 +258,9 @@ public class Schedule implements Comparable<Schedule> {
         List<Resource> clonedPermittedResources = clonedTask.getPermittedResources(clonedResources);
         int resourceId = permittedResources.indexOf(task.getResource());
         int shift = nextBoolean() ? -1 : 1;
-        Resource clonedResource = clonedPermittedResources.get((resourceId + shift) % clonedPermittedResources.size());
+        //int kurczak = (resourceId + shift) % clonedPermittedResources.size();
+        int kurczak = floorMod(resourceId + shift, clonedPermittedResources.size());
+        Resource clonedResource = clonedPermittedResources.get(kurczak);
         clonedTask.setResource(clonedResource);
         return clonedSchedule;
     }
@@ -285,6 +290,50 @@ public class Schedule implements Comparable<Schedule> {
             same = thisTask.getTaskId() != otherTask.getTaskId() && thisTask.getResource().getResourceId() != otherTask.getResource().getResourceId();
         }
         return same;
+    }
+
+    public int maxTime() {
+        int sumDuration = 0;
+        for (Task task : tasks) {
+            sumDuration += task.getDuration();
+        }
+        return sumDuration;
+    }
+
+    public int minTime() {
+        int maxDuration = Integer.MIN_VALUE;
+        for (Task task : tasks) {
+            maxDuration = max(maxDuration, task.getDuration());
+        }
+        return maxDuration;
+    }
+
+    public double maxCost() {
+        double maxSalary = Double.MIN_VALUE;
+        int timeNeeded = 0;
+        for (Resource resource : resources) {
+            maxSalary = max(maxSalary, resource.getSalary());
+        }
+        for (Task task : tasks) {
+            timeNeeded += task.getDuration();
+        }
+        return maxSalary * timeNeeded();
+    }
+
+    public double minCost() {
+        double minSalary = Double.MAX_VALUE;
+        for (Resource resource : resources) {
+            minSalary = min(minSalary, resource.getSalary());
+        }
+        return minSalary * timeNeeded();
+    }
+
+    public int timeNeeded() {
+        int timeNeeded = 0;
+        for (Task task : tasks) {
+            timeNeeded += task.getDuration();
+        }
+        return timeNeeded;
     }
 
     @Override
