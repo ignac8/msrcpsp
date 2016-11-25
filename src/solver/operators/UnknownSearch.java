@@ -9,8 +9,8 @@ import static java.util.Collections.sort;
 
 public class UnknownSearch extends LocalSearch {
 
-    public UnknownSearch(int size) {
-        super(size);
+    public UnknownSearch(int neighbourSize) {
+        super(neighbourSize);
     }
 
     @Override

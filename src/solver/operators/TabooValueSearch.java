@@ -15,8 +15,8 @@ public class TabooValueSearch extends LocalSearch implements Operator {
     private EvictingQueue<Double> taboo;
     private double eps;
 
-    public TabooValueSearch(int size, int tabooSize, double eps) {
-        super(size);
+    public TabooValueSearch(int neighbourSize, int tabooSize, double eps) {
+        super(neighbourSize);
         this.taboo = EvictingQueue.create(tabooSize);
         this.eps = eps;
     }

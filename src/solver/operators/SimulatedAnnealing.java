@@ -15,8 +15,8 @@ public class SimulatedAnnealing extends LocalSearch {
     private double minFitness;
     private double hiddenTemp;
 
-    public SimulatedAnnealing(int size, double decTemp, double modifier, int minTime, int maxTime) {
-        super(size);
+    public SimulatedAnnealing(int neighbourSize, double decTemp, double modifier, int minTime, int maxTime) {
+        super(neighbourSize);
         this.decTemp = decTemp;
         this.hiddenTemp = (maxTime - minTime) * modifier;
         this.currTemp = hiddenTemp;

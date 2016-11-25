@@ -13,8 +13,8 @@ public class TabooSearch extends LocalSearch implements Operator {
 
     private EvictingQueue<Schedule> taboo;
 
-    public TabooSearch(int size, int tabooSize) {
-        super(size);
+    public TabooSearch(int neighbourSize, int tabooSize) {
+        super(neighbourSize);
         taboo = EvictingQueue.create(tabooSize);
     }
 

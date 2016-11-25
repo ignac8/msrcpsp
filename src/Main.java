@@ -1,19 +1,10 @@
-import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.apache.commons.math3.util.MathUtils;
-import org.apache.commons.math3.util.Precision;
+import algorithms.GA;
+import algorithms.SA;
+import algorithms.TS;
 import problem.Schedule;
-import solvers.Solver;
-import solvers.operators.Operator;
-import solvers.operators.OrderCrossover;
-import solvers.operators.OrderMutation;
-import solvers.operators.OrderRepair;
-import solvers.operators.ResourceCrossover;
-import solvers.operators.ResourceMutation;
-import solvers.operators.SimulatedAnnealing;
-import solvers.operators.TabooSearch;
-import solvers.operators.TabooValueSearch;
-import solvers.operators.TournamentSelection;
-import solvers.operators.UnknownSearch;
+import solver.Solver;
+import solver.operators.Operator;
+import solver.operators.TabooSearch;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,7 +32,7 @@ public class Main {
         System.out.println("OK!");
         File directory = new File("competitive");
         List<File> files = asList(directory.listFiles());
-        int runs = 10;
+        int runs = 5;
         List<String> filenames = new ArrayList<>();
         for (File file : files) {
             String filename = file.getName();
@@ -49,45 +40,34 @@ public class Main {
             if (true) {
                 Schedule schedule = loadScheduleFromFile(filename);
                 ExecutorService executorService = Executors.newFixedThreadPool(5);
-                Vector<Future<Schedule>> vector = new Vector<>(runs);
-                double[] finesses = new double[runs];
+                Vector<Future<Schedule>> vectorGA = new Vector<>(runs);
+                Vector<Future<Schedule>> vectorTS = new Vector<>(runs);
+                Vector<Future<Schedule>> vectorSA = new Vector<>(runs);
+                double[][] finesses = new double[3][runs];
                 for (int counter = 0; counter < runs; counter++) {
-                    List<Operator> operators = new ArrayList<>();
-                    int populationSize = 1;
-                    int passLimit = 10000;
-                    long timeLimit = 1000 * 1000;
-//                    operators.add(new OrderRepair());
-//                    operators.add(new TournamentSelection(10));
-//                    operators.add(new OrderCrossover(0.85));
-//                    operators.add(new ResourceCrossover(0.85));
-//                    operators.add(new OrderMutation(0.005));
-//                    operators.add(new ResourceMutation(0.005));
-//                    operators.add(new OrderRepair());
-//                    operators.add(new LocalSearch());
-                    int size = 10;
-                    int tabooSize = 1000;
-                    operators.add(new TabooSearch(size, tabooSize));
-//                    operators.add(new TabooValueSearch(1, 20, Precision.EPSILON));
-//                    operators.add(new UnknownSearch(size));
-//                    double decTemp = 0.99;
-//                    double modifier = 1;
-//                    operators.add(new SimulatedAnnealing(size, decTemp, modifier, schedule.minTime(), schedule.maxTime()));
-                    Solver solver = new Solver(schedule, populationSize, operators, passLimit, timeLimit, filename + "_" + counter + "_");
-//                    solver.call();
-                    vector.add(executorService.submit(solver));
+                    Solver solverGA = new GA().prepareSolver(schedule, filename, counter);
+                    Solver solverTS = new TS().prepareSolver(schedule, filename, counter);
+                    Solver solverSA = new SA().prepareSolver(schedule, filename, counter);
+                    vectorGA.add(executorService.submit(solverGA));
+                    vectorTS.add(executorService.submit(solverTS));
+                    vectorSA.add(executorService.submit(solverSA));
                 }
                 for (int counter = 0; counter < runs; counter++) {
                     try {
-                        finesses[counter] = vector.get(counter).get().getFitness();
+                        finesses[0][counter] = vectorGA.get(counter).get().getFitness();
+                        finesses[1][counter] = vectorTS.get(counter).get().getFitness();
+                        finesses[2][counter] = vectorSA.get(counter).get().getFitness();
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
                 }
-                System.out.println(filename + ": " + min(finesses) + " " + mean(finesses) + " " + max(finesses) + " " + sqrt(variance(finesses)));
+                System.out.println(filename);
+                System.out.println("GA : " + min(finesses[0]) + " " + mean(finesses[0]) + " " + max(finesses[0]) + " " + sqrt(variance(finesses[0])));
+                System.out.println("TS : " + min(finesses[1]) + " " + mean(finesses[1]) + " " + max(finesses[1]) + " " + sqrt(variance(finesses[1])));
+                System.out.println("SA : " + min(finesses[2]) + " " + mean(finesses[2]) + " " + max(finesses[2]) + " " + sqrt(variance(finesses[2])));
                 executorService.shutdownNow();
             }
         }
-//        System.out.println("Finished: " + (System.currentTimeMillis() - time) + " ms");
         System.out.println("Finished: " + formatDurationHMS(System.currentTimeMillis() - time));
     }
 }

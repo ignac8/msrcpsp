@@ -11,8 +11,8 @@ public class LocalSearch implements Operator {
 
     private int size;
 
-    public LocalSearch(int size) {
-        this.size = size;
+    public LocalSearch(int neighbourSize) {
+        this.size = neighbourSize;
     }
 
     @Override
