@@ -32,7 +32,7 @@ public class Main {
         System.out.println("OK!");
         File directory = new File("competitive");
         List<File> files = asList(directory.listFiles());
-        int runs = 5;
+        int runs = 10;
         List<String> filenames = new ArrayList<>();
         for (File file : files) {
             String filename = file.getName();
