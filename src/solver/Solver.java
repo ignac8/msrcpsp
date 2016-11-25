@@ -1,8 +1,8 @@
-package solvers;
+package solver;
 
 import problem.Schedule;
 import problem.Task;
-import solvers.operators.Operator;
+import solver.operators.Operator;
 
 import java.util.ArrayList;
 import java.util.List;

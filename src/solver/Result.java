@@ -1,4 +1,4 @@
-package solvers;
+package solver;
 
 import problem.Schedule;
 

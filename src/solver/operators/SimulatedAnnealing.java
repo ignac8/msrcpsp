@@ -1,11 +1,10 @@
-package solvers.operators;
+package solver.operators;
 
 import problem.Schedule;
 
 import java.util.List;
 
 import static java.lang.Math.exp;
-import static java.lang.Math.log;
 import static java.util.Collections.shuffle;
 import static org.apache.commons.lang3.RandomUtils.nextDouble;
 

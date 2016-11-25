@@ -11,7 +11,7 @@ import problem.Resource;
 import problem.Schedule;
 import problem.Skill;
 import problem.Task;
-import solvers.Result;
+import solver.Result;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

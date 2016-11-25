@@ -1,4 +1,4 @@
-package solvers.operators;
+package solver.operators;
 
 import com.google.common.collect.EvictingQueue;
 import problem.Schedule;
