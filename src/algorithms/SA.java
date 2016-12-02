@@ -19,7 +19,7 @@ public class SA implements Algorithm {
         int neighbourSize = 1;
         double decTemp = 0.999;
         double modifier = 1;
-        operators.add(new SimulatedAnnealing(neighbourSize, decTemp, modifier, schedule.minTime(), schedule.maxTime()));
+        operators.add(new SimulatedAnnealing(neighbourSize, decTemp, modifier, schedule.minTime(), schedule.maxTime(), populationSize));
         return new Solver(schedule, populationSize, operators, passLimit, timeLimit, filename + "_");
     }
 }
