@@ -4,5 +4,5 @@ import problem.Schedule;
 import solver.Solver;
 
 public interface Algorithm {
-    Solver prepareSolver(Schedule schedule, String filename, int counter);
+    Solver prepareSolver(Schedule schedule, String filename);
 }

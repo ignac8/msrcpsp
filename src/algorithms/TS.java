@@ -11,7 +11,7 @@ import java.util.List;
 public class TS implements Algorithm {
 
     @Override
-    public Solver prepareSolver(Schedule schedule, String filename, int counter) {
+    public Solver prepareSolver(Schedule schedule, String filename) {
         List<Operator> operators = new ArrayList<>();
         int populationSize = 1;
         int passLimit = 10000;
@@ -19,6 +19,6 @@ public class TS implements Algorithm {
         int neighbourSize = 10;
         int tabooSize = 100;
         operators.add(new TabooSearch(neighbourSize, tabooSize));
-        return new Solver(schedule, populationSize, operators, passLimit, timeLimit, filename + "_" + counter + "_");
+        return new Solver(schedule, populationSize, operators, passLimit, timeLimit, filename + "_");
     }
 }

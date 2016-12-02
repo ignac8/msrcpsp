@@ -32,11 +32,11 @@ public class Main {
         System.out.println("OK!");
         File directory = new File("competitive");
         List<File> files = asList(directory.listFiles());
-        int runs = 10;
+        int runs = 1;
         List<String> filenames = new ArrayList<>();
         for (File file : files) {
             String filename = file.getName();
-//            if ((filename.indexOf("200_20_54_15.def") == 0 || filename.indexOf("200_20_54_15.def") == 0) && filename.lastIndexOf(".def") == filename.length() - 4) {
+//            if ((filename.indexOf("100_5_22_15.def") == 0 || filename.indexOf("100_5_22_15.def") == 0) && filename.lastIndexOf(".def") == filename.length() - 4) {
             if (true) {
                 Schedule schedule = loadScheduleFromFile(filename);
                 ExecutorService executorService = Executors.newFixedThreadPool(5);
@@ -45,9 +45,9 @@ public class Main {
                 Vector<Future<Schedule>> vectorSA = new Vector<>(runs);
                 double[][] finesses = new double[3][runs];
                 for (int counter = 0; counter < runs; counter++) {
-                    Solver solverGA = new GA().prepareSolver(schedule, filename, counter);
-                    Solver solverTS = new TS().prepareSolver(schedule, filename, counter);
-                    Solver solverSA = new SA().prepareSolver(schedule, filename, counter);
+                    Solver solverGA = new GA().prepareSolver(schedule, filename+"_GA_" + counter);
+                    Solver solverTS = new TS().prepareSolver(schedule, filename+"_TS_" + counter);
+                    Solver solverSA = new SA().prepareSolver(schedule, filename+"_SA_" + counter);
                     vectorGA.add(executorService.submit(solverGA));
                     vectorTS.add(executorService.submit(solverTS));
                     vectorSA.add(executorService.submit(solverSA));

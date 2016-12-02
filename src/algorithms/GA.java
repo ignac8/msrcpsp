@@ -15,7 +15,7 @@ import java.util.List;
 public class GA implements Algorithm {
 
     @Override
-    public Solver prepareSolver(Schedule schedule, String filename, int counter) {
+    public Solver prepareSolver(Schedule schedule, String filename) {
         List<Operator> operators = new ArrayList<>();
         int populationSize = 100;
         int passLimit = 1000;
@@ -25,6 +25,6 @@ public class GA implements Algorithm {
         operators.add(new ResourceCrossover(0.9));
         operators.add(new OrderMutation(0.01));
         operators.add(new ResourceMutation(0.01));
-        return new Solver(schedule, populationSize, operators, passLimit, timeLimit, filename + "_" + counter + "_");
+        return new Solver(schedule, populationSize, operators, passLimit, timeLimit, filename + "_");
     }
 }
