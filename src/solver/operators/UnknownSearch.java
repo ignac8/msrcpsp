@@ -2,6 +2,7 @@ package solver.operators;
 
 import problem.Schedule;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.shuffle;
@@ -14,9 +15,16 @@ public class UnknownSearch extends LocalSearch {
     }
 
     @Override
-    protected Schedule choose(List<Schedule> neighbours, Schedule previousSchedule) {
-        shuffle(neighbours);
-        sort(neighbours);
-        return previousSchedule.isSame(neighbours.get(0)) ? neighbours.get(1) : neighbours.get(0);
+    protected List<Schedule> choose(List<List<Schedule>> listOfNeighbours, List<Schedule> previousSchedules) {
+        List<Schedule> result = new ArrayList<>();
+        for (int counter = 0; counter < listOfNeighbours.size(); counter++) {
+            List<Schedule> neighbours = listOfNeighbours.get(counter);
+            Schedule previousSchedule = previousSchedules.get(counter);
+            shuffle(neighbours);
+            sort(neighbours);
+            Schedule chosenSchedule = previousSchedule.isSame(neighbours.get(0)) ? neighbours.get(1) : neighbours.get(0);
+            result.add(chosenSchedule);
+        }
+        return result;
     }
 }
