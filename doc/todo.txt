@@ -1,3 +1,2 @@
 ﻿Mersenne twister
-Poprawić local searcha, żeby działał poprawnie na kilku naraz
 Dodać rozdzielenie na jednorazowe
