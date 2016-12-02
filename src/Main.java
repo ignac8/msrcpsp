@@ -3,8 +3,6 @@ import algorithms.SA;
 import algorithms.TS;
 import problem.Schedule;
 import solver.Solver;
-import solver.operators.Operator;
-import solver.operators.TabooSearch;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,9 +43,9 @@ public class Main {
                 Vector<Future<Schedule>> vectorSA = new Vector<>(runs);
                 double[][] finesses = new double[3][runs];
                 for (int counter = 0; counter < runs; counter++) {
-                    Solver solverGA = new GA().prepareSolver(schedule, filename+"_GA_" + counter);
-                    Solver solverTS = new TS().prepareSolver(schedule, filename+"_TS_" + counter);
-                    Solver solverSA = new SA().prepareSolver(schedule, filename+"_SA_" + counter);
+                    Solver solverGA = new GA().prepareSolver(schedule, filename + "_GA_" + counter);
+                    Solver solverTS = new TS().prepareSolver(schedule, filename + "_TS_" + counter);
+                    Solver solverSA = new SA().prepareSolver(schedule, filename + "_SA_" + counter);
                     vectorGA.add(executorService.submit(solverGA));
                     vectorTS.add(executorService.submit(solverTS));
                     vectorSA.add(executorService.submit(solverSA));

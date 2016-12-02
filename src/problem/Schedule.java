@@ -1,9 +1,6 @@
 package problem;
 
-import org.apache.commons.lang3.RandomUtils;
-
 import java.util.ArrayList;
-import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
 import static java.lang.Double.compare;
