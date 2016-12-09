@@ -46,11 +46,25 @@ public class Solver implements Callable<Schedule> {
 
     public Schedule call() {
         initialize();
+        for (Operator operator : preOperators) {
+            for (int counter = 0; counter < operator.getCallCount(); counter++) {
+                schedules = operator.call(schedules);
+                calculate();
+            }
+        }
         while (!done()) {
             for (Operator operator : operators) {
-                schedules = operator.call(schedules);
+                for (int counter = 0; counter < operator.getCallCount(); counter++) {
+                    schedules = operator.call(schedules);
+                }
             }
             calculate();
+        }
+        for (Operator operator : postOperators) {
+            for (int counter = 0; counter < operator.getCallCount(); counter++) {
+                schedules = operator.call(schedules);
+                calculate();
+            }
         }
         graph();
         save();

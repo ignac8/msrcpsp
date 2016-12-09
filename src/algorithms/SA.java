@@ -1,17 +1,7 @@
 package algorithms;
 
 import problem.Schedule;
-import solver.Solver;
-import solver.operators.Operator;
-import solver.operators.OrderCrossover;
-import solver.operators.OrderMutation;
-import solver.operators.ResourceCrossover;
-import solver.operators.ResourceMutation;
 import solver.operators.SimulatedAnnealing;
-import solver.operators.TournamentSelection;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SA extends Algorithm {
 

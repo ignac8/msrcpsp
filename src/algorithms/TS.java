@@ -1,12 +1,7 @@
 package algorithms;
 
 import problem.Schedule;
-import solver.Solver;
-import solver.operators.Operator;
 import solver.operators.TabooSearch;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TS extends Algorithm {
 

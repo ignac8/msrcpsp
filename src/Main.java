@@ -1,5 +1,7 @@
 import algorithms.Algorithm;
 import algorithms.GA;
+import algorithms.GA_SA;
+import algorithms.GA_TS;
 import algorithms.SA;
 import algorithms.TS;
 import problem.Schedule;
@@ -31,18 +33,20 @@ public class Main {
         System.out.println("OK!");
         File directory = new File("competitive");
         List<File> files = asList(directory.listFiles());
-        int runs = 10;
+        int runs = 25;
         List<String> filenames = new ArrayList<>();
         for (File file : files) {
             String filename = file.getName();
-            if ((filename.indexOf("10_3_5_3.def") == 0 || filename.indexOf("100_20_46_15.def") == 0) && filename.lastIndexOf(".def") == filename.length() - 4) {
-//            if (true) {
+//            if ((filename.indexOf("10_3_5_3.def") == 0 || filename.indexOf("100_20_46_15.def") == 0) && filename.lastIndexOf(".def") == filename.length() - 4) {
+            if (true) {
                 Schedule schedule = loadScheduleFromFile(filename);
                 ExecutorService executorService = Executors.newFixedThreadPool(5);
                 Vector<Algorithm> algorithms = new Vector<>();
                 algorithms.add(new GA());
                 algorithms.add(new TS());
-               algorithms.add(new SA());
+                algorithms.add(new SA());
+                algorithms.add(new GA_TS());
+                algorithms.add(new GA_SA());
                 Vector<Vector<Future<Schedule>>> vectors = new Vector<>();
                 for (int outerCounter = 0; outerCounter < algorithms.size(); outerCounter++) {
                     Vector<Future<Schedule>> vector = new Vector<>(runs);
