@@ -8,7 +8,11 @@ import java.util.List;
 
 import static java.lang.Math.max;
 
-public class OrderRepair implements Operator {
+public class OrderRepair extends Operator {
+
+    public OrderRepair(int callCount) {
+        super(callCount);
+    }
 
     @Override
     public List<Schedule> call(List<Schedule> schedules) {

@@ -12,8 +12,8 @@ import static org.apache.commons.lang3.RandomUtils.nextDouble;
 
 public class OrderMutation extends Mutation {
 
-    public OrderMutation(double chance) {
-        super(chance);
+    public OrderMutation(int callCount, double chance) {
+        super(callCount, chance);
     }
 
     @Override

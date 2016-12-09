@@ -10,8 +10,8 @@ import static java.util.Collections.sort;
 
 public class UnknownSearch extends LocalSearch {
 
-    public UnknownSearch(int neighbourSize) {
-        super(neighbourSize);
+    public UnknownSearch(int callCount, int neighbourSize) {
+        super(callCount, neighbourSize);
     }
 
     @Override

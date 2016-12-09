@@ -40,8 +40,8 @@ public class Main {
                 Schedule schedule = loadScheduleFromFile(filename);
                 ExecutorService executorService = Executors.newFixedThreadPool(5);
                 Vector<Algorithm> algorithms = new Vector<>();
-//                algorithms.add(new GA());
-//                algorithms.add(new TS());
+                algorithms.add(new GA());
+                algorithms.add(new TS());
                algorithms.add(new SA());
                 Vector<Vector<Future<Schedule>>> vectors = new Vector<>();
                 for (int outerCounter = 0; outerCounter < algorithms.size(); outerCounter++) {

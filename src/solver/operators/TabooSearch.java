@@ -10,12 +10,12 @@ import java.util.List;
 import static java.util.Collections.shuffle;
 import static java.util.Collections.sort;
 
-public class TabooSearch extends LocalSearch implements Operator {
+public class TabooSearch extends LocalSearch {
 
     private EvictingQueue<Schedule> taboo;
 
-    public TabooSearch(int neighbourSize, int tabooSize) {
-        super(neighbourSize);
+    public TabooSearch(int callCount, int neighbourSize, int tabooSize) {
+        super(callCount, neighbourSize);
         taboo = EvictingQueue.create(tabooSize);
     }
 

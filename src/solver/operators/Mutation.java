@@ -4,10 +4,11 @@ import problem.Schedule;
 
 import java.util.List;
 
-public abstract class Mutation implements Operator {
+public abstract class Mutation extends Operator {
     protected double chance;
 
-    public Mutation(double chance) {
+    public Mutation(int callCount, double chance) {
+        super(callCount);
         this.chance = chance;
     }
 

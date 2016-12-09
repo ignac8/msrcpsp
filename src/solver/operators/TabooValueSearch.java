@@ -11,13 +11,13 @@ import java.util.List;
 import static java.util.Collections.shuffle;
 import static java.util.Collections.sort;
 
-public class TabooValueSearch extends LocalSearch implements Operator {
+public class TabooValueSearch extends LocalSearch {
 
     private EvictingQueue<Double> taboo;
     private double eps;
 
-    public TabooValueSearch(int neighbourSize, int tabooSize, double eps) {
-        super(neighbourSize);
+    public TabooValueSearch(int callCount, int neighbourSize, int tabooSize, double eps) {
+        super(callCount, neighbourSize);
         this.taboo = EvictingQueue.create(tabooSize);
         this.eps = eps;
     }

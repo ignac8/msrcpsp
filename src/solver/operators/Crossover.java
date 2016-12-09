@@ -6,10 +6,11 @@ import java.util.List;
 
 import static org.apache.commons.lang3.RandomUtils.nextDouble;
 
-public abstract class Crossover implements Operator {
+public abstract class Crossover extends Operator {
     private double chance;
 
-    public Crossover(double chance) {
+    public Crossover(int callCount, double chance) {
+        super(callCount);
         this.chance = chance;
     }
 

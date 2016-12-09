@@ -7,11 +7,12 @@ import java.util.List;
 
 import static org.apache.commons.lang3.RandomUtils.nextInt;
 
-public class TournamentSelection implements Operator {
+public class TournamentSelection extends Operator {
 
     private int tournamentSize;
 
-    public TournamentSelection(int tournamentSize) {
+    public TournamentSelection(int callCount, int tournamentSize) {
+        super(callCount);
         this.tournamentSize = tournamentSize;
     }
 

@@ -16,7 +16,9 @@ import static utils.FileUtils.saveScheduleToFile;
 public class Solver implements Callable<Schedule> {
 
     private List<Schedule> schedules;
+    private List<Operator> preOperators;
     private List<Operator> operators;
+    private List<Operator> postOperators;
     private int passCounter;
     private int passLimit;
     private long timeStart;
@@ -25,14 +27,16 @@ public class Solver implements Callable<Schedule> {
     private List<Result> results;
     private String filename;
 
-    public Solver(Schedule defaultSchedule, int populationSize, List<Operator> operators, int passLimit, long timeLimit, String filename) {
+    public Solver(Schedule defaultSchedule, int populationSize, List<Operator> preOperators, List<Operator> operators, List<Operator> postOperators, int passLimit, long timeLimit, String filename) {
         schedules = new ArrayList<>(populationSize);
         results = new ArrayList<>();
         for (int counter = 0; counter < populationSize; counter++) {
             Schedule clonedSchedule = new Schedule(defaultSchedule);
             schedules.add(clonedSchedule);
         }
+        this.preOperators = preOperators;
         this.operators = operators;
+        this.postOperators = postOperators;
         passCounter = 0;
         timeStart = currentTimeMillis();
         this.passLimit = passLimit;

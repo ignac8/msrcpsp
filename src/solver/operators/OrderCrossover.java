@@ -11,8 +11,8 @@ import static org.apache.commons.lang3.RandomUtils.nextInt;
 
 public class OrderCrossover extends Crossover {
 
-    public OrderCrossover(double chance) {
-        super(chance);
+    public OrderCrossover(int callCount, double chance) {
+        super(callCount, chance);
     }
 
     @Override

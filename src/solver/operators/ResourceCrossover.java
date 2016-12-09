@@ -11,8 +11,8 @@ import static org.apache.commons.lang3.RandomUtils.nextInt;
 
 public class ResourceCrossover extends Crossover {
 
-    public ResourceCrossover(double chance) {
-        super(chance);
+    public ResourceCrossover(int callCount, double chance) {
+        super(callCount, chance);
     }
 
     @Override

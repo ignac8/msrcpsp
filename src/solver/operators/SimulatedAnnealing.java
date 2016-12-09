@@ -16,8 +16,8 @@ public class SimulatedAnnealing extends LocalSearch {
     private List<Double> minFitnesses;
     private List<Double> hiddenTemps;
 
-    public SimulatedAnnealing(int neighbourSize, double decTemp, double modifier, int minTime, int maxTime, int populationSize) {
-        super(neighbourSize);
+    public SimulatedAnnealing(int callCount, int neighbourSize, double decTemp, double modifier, int minTime, int maxTime, int populationSize) {
+        super(callCount, neighbourSize);
         this.decTemp = decTemp;
         currTemps = new ArrayList<>();
         minFitnesses = new ArrayList<>();

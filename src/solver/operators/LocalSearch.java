@@ -8,11 +8,12 @@ import java.util.List;
 import static java.util.Collections.shuffle;
 import static java.util.Collections.sort;
 
-public class LocalSearch implements Operator {
+public class LocalSearch extends Operator {
 
     private int size;
 
-    public LocalSearch(int neighbourSize) {
+    public LocalSearch(int callCount, int neighbourSize) {
+        super(callCount);
         this.size = neighbourSize;
     }
 

@@ -9,8 +9,8 @@ import static org.apache.commons.lang3.RandomUtils.nextDouble;
 
 public class ResourceMutation extends Mutation {
 
-    public ResourceMutation(double chance) {
-        super(chance);
+    public ResourceMutation(int callCount, double chance) {
+        super(callCount, chance);
     }
 
     @Override
