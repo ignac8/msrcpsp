@@ -12,7 +12,11 @@ import solver.operators.TournamentSelection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GA implements Algorithm {
+public class GA extends Algorithm {
+
+    public GA() {
+        prefix = "GA";
+    }
 
     @Override
     public Solver prepareSolver(Schedule schedule, String filename) {
@@ -25,6 +29,6 @@ public class GA implements Algorithm {
         operators.add(new ResourceCrossover(0.9));
         operators.add(new OrderMutation(0.01));
         operators.add(new ResourceMutation(0.01));
-        return new Solver(schedule, populationSize, operators, passLimit, timeLimit, filename + "_");
+        return new Solver(schedule, populationSize, operators, passLimit, timeLimit, filename + "_" + prefix + "_");
     }
 }

@@ -1,3 +1,4 @@
+import algorithms.Algorithm;
 import algorithms.GA;
 import algorithms.SA;
 import algorithms.TS;
@@ -30,39 +31,42 @@ public class Main {
         System.out.println("OK!");
         File directory = new File("competitive");
         List<File> files = asList(directory.listFiles());
-        int runs = 1;
+        int runs = 10;
         List<String> filenames = new ArrayList<>();
         for (File file : files) {
             String filename = file.getName();
-//            if ((filename.indexOf("100_5_22_15.def") == 0 || filename.indexOf("100_5_22_15.def") == 0) && filename.lastIndexOf(".def") == filename.length() - 4) {
-            if (true) {
+            if ((filename.indexOf("10_3_5_3.def") == 0 || filename.indexOf("100_20_46_15.def") == 0) && filename.lastIndexOf(".def") == filename.length() - 4) {
+//            if (true) {
                 Schedule schedule = loadScheduleFromFile(filename);
                 ExecutorService executorService = Executors.newFixedThreadPool(5);
-                Vector<Future<Schedule>> vectorGA = new Vector<>(runs);
-                Vector<Future<Schedule>> vectorTS = new Vector<>(runs);
-                Vector<Future<Schedule>> vectorSA = new Vector<>(runs);
-                double[][] finesses = new double[3][runs];
-                for (int counter = 0; counter < runs; counter++) {
-                    Solver solverGA = new GA().prepareSolver(schedule, filename + "_GA_" + counter);
-                    Solver solverTS = new TS().prepareSolver(schedule, filename + "_TS_" + counter);
-                    Solver solverSA = new SA().prepareSolver(schedule, filename + "_SA_" + counter);
-                    vectorGA.add(executorService.submit(solverGA));
-                    vectorTS.add(executorService.submit(solverTS));
-                    vectorSA.add(executorService.submit(solverSA));
+                Vector<Algorithm> algorithms = new Vector<>();
+//                algorithms.add(new GA());
+//                algorithms.add(new TS());
+               algorithms.add(new SA());
+                Vector<Vector<Future<Schedule>>> vectors = new Vector<>();
+                for (int outerCounter = 0; outerCounter < algorithms.size(); outerCounter++) {
+                    Vector<Future<Schedule>> vector = new Vector<>(runs);
+                    Algorithm algorithm = algorithms.get(outerCounter);
+                    for (int innerCounter = 0; innerCounter < runs; innerCounter++) {
+                        Solver solver = algorithm.prepareSolver(schedule, filename + "_" + innerCounter);
+                        vector.add(executorService.submit(solver));
+                    }
+                    vectors.add(vector);
                 }
-                for (int counter = 0; counter < runs; counter++) {
-                    try {
-                        finesses[0][counter] = vectorGA.get(counter).get().getFitness();
-                        finesses[1][counter] = vectorTS.get(counter).get().getFitness();
-                        finesses[2][counter] = vectorSA.get(counter).get().getFitness();
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
+                double[][] finesses = new double[algorithms.size()][runs];
+                for (int outerCounter = 0; outerCounter < algorithms.size(); outerCounter++) {
+                    for (int innerCounter = 0; innerCounter < runs; innerCounter++) {
+                        try {
+                            finesses[outerCounter][innerCounter] = vectors.get(outerCounter).get(innerCounter).get().getFitness();
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 System.out.println(filename);
-                System.out.println("GA : " + min(finesses[0]) + " " + mean(finesses[0]) + " " + max(finesses[0]) + " " + sqrt(variance(finesses[0])));
-                System.out.println("TS : " + min(finesses[1]) + " " + mean(finesses[1]) + " " + max(finesses[1]) + " " + sqrt(variance(finesses[1])));
-                System.out.println("SA : " + min(finesses[2]) + " " + mean(finesses[2]) + " " + max(finesses[2]) + " " + sqrt(variance(finesses[2])));
+                for (int counter = 0; counter < algorithms.size(); counter++) {
+                    System.out.println(algorithms.get(counter).getPrefix() + ": " + min(finesses[counter]) + " " + mean(finesses[counter]) + " " + max(finesses[counter]) + " " + sqrt(variance(finesses[counter])));
+                }
                 executorService.shutdownNow();
             }
         }

@@ -127,10 +127,10 @@ public class Schedule implements Comparable<Schedule> {
         for (Task task : tasks) {
             calculate(task);
         }
-        readable = "";
-        for (Task task : tasks) {
-            readable += task.getTaskId() + ":" + task.getResource().getResourceId() + " ";
-        }
+//        readable = "";
+//        for (Task task : tasks) {
+//            readable += task.getTaskId() + ":" + task.getResource().getResourceId() + " ";
+//        }
         fitness();
     }
 

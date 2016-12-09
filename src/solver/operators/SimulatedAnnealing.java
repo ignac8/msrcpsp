@@ -26,6 +26,7 @@ public class SimulatedAnnealing extends LocalSearch {
         for (int counter = 0; counter < populationSize; counter++) {
             hiddenTemps.add(hiddenTemp);
             currTemps.add(hiddenTemp);
+            minFitnesses.add(0.0);
         }
     }
 

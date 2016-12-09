@@ -8,7 +8,11 @@ import solver.operators.TabooSearch;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TS implements Algorithm {
+public class TS extends Algorithm {
+
+    public TS() {
+        prefix = "TS";
+    }
 
     @Override
     public Solver prepareSolver(Schedule schedule, String filename) {
@@ -17,8 +21,8 @@ public class TS implements Algorithm {
         int passLimit = 10000;
         long timeLimit = 1000 * 1000;
         int neighbourSize = 10;
-        int tabooSize = 100;
+        int tabooSize = 1000;
         operators.add(new TabooSearch(neighbourSize, tabooSize));
-        return new Solver(schedule, populationSize, operators, passLimit, timeLimit, filename + "_");
+        return new Solver(schedule, populationSize, operators, passLimit, timeLimit, filename + "_" + prefix + "_");
     }
 }
