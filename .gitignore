@@ -8,3 +8,5 @@ graphsbak/**
 resultsNew/**
 doc/~*.tmp
 doc/~$*
+/.idea/*
+/target/*
