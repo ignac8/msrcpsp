@@ -2,32 +2,26 @@ package it.zerko.msrcpsp.solver.operator;
 
 import it.zerko.msrcpsp.problem.Schedule;
 import it.zerko.msrcpsp.problem.Task;
+import org.apache.commons.lang3.RandomUtils;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import static java.util.Collections.shuffle;
-import static java.util.Collections.swap;
-import static org.apache.commons.lang3.RandomUtils.nextDouble;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class OrderMutation extends Mutation {
 
-    public OrderMutation(int callCount, double chance) {
-        super(callCount, chance);
+    public OrderMutation(double chance) {
+        super(chance);
     }
 
     @Override
     protected void mutation(Schedule schedule) {
         List<Task> tasks = schedule.getTasks();
-        List<Integer> order = new ArrayList<>();
-        for (int counter = 0; counter < tasks.size(); counter++) {
-            order.add(counter);
-        }
-        shuffle(order);
-        for (int counter = 0; counter < tasks.size() - 1; counter += 2) {
-            if (nextDouble(0, 1) < chance) {
-                swap(tasks, order.get(counter), order.get(counter + 1));
-            }
-        }
+        List<Integer> order = IntStream.range(0, tasks.size()).boxed().collect(Collectors.toList());
+        Collections.shuffle(order);
+        IntStream.iterate(0, counter -> counter < tasks.size() - 1, counter -> counter + 2)
+                .filter(counter -> RandomUtils.nextDouble(0, 1) < chance)
+                .forEach(counter -> Collections.swap(tasks, order.get(counter), order.get(counter + 1)));
     }
 }

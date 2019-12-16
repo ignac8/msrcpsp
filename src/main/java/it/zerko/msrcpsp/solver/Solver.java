@@ -1,106 +1,58 @@
 package it.zerko.msrcpsp.solver;
 
 import it.zerko.msrcpsp.problem.Schedule;
-import it.zerko.msrcpsp.problem.Task;
 import it.zerko.msrcpsp.solver.operator.Operator;
+import lombok.Getter;
 
-import java.util.ArrayList;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import static it.zerko.msrcpsp.util.FileUtils.saveGraphToFile;
-import static it.zerko.msrcpsp.util.FileUtils.saveScheduleToFile;
-import static java.lang.System.currentTimeMillis;
-import static java.util.Collections.shuffle;
-
-public class Solver implements Callable<Schedule> {
+@Getter
+public class Solver implements Runnable {
 
     private List<Schedule> schedules;
-    private List<Operator> preOperators;
     private List<Operator> operators;
-    private List<Operator> postOperators;
     private int passCounter;
     private int passLimit;
-    private long timeStart;
-    private long timeLimit;
-    private Schedule bestSchedule;
+    private LocalDateTime timeStart;
+    private Duration timeLimit;
+    private Optional<Schedule> bestSchedule;
     private List<Result> results;
-    private String filename;
 
-    public Solver(Schedule defaultSchedule, int populationSize, List<Operator> preOperators, List<Operator> operators, List<Operator> postOperators, int passLimit, long timeLimit, String filename) {
-        schedules = new ArrayList<>(populationSize);
-        results = new ArrayList<>();
-        for (int counter = 0; counter < populationSize; counter++) {
-            Schedule clonedSchedule = new Schedule(defaultSchedule);
-            schedules.add(clonedSchedule);
-        }
-        this.preOperators = preOperators;
+    public Solver(Schedule defaultSchedule, int populationSize, List<Operator> operators, int passLimit, Duration timeLimit) {
+        this.schedules = IntStream.range(0, populationSize).mapToObj(i -> defaultSchedule).collect(Collectors.toList());
         this.operators = operators;
-        this.postOperators = postOperators;
-        passCounter = 0;
-        timeStart = currentTimeMillis();
+        this.passCounter = 0;
         this.passLimit = passLimit;
+        this.timeStart = LocalDateTime.now();
         this.timeLimit = timeLimit;
-        this.filename = filename;
+        this.bestSchedule = Optional.empty();
+        this.results = new LinkedList<>();
     }
 
-    public Schedule call() {
-        initialize();
-        for (Operator operator : preOperators) {
-            for (int counter = 0; counter < operator.getCallCount(); counter++) {
-                schedules = operator.call(schedules);
-                calculate();
-            }
+    public void run() {
+        schedules.forEach(schedule -> Collections.shuffle(schedule.getTasks()));
+        schedules.forEach(Schedule::assignRandomResourcesToTasks);
+        calculateFitness();
+        while (!(Duration.between(timeStart, LocalDateTime.now()).compareTo(timeLimit) > 0 || passCounter++ > passLimit)) {
+            operators.forEach(operator -> schedules = operator.modify(schedules));
+            calculateFitness();
         }
-        while (!done()) {
-            for (Operator operator : operators) {
-                for (int counter = 0; counter < operator.getCallCount(); counter++) {
-                    schedules = operator.call(schedules);
-                }
-            }
-            calculate();
-        }
-        for (Operator operator : postOperators) {
-            for (int counter = 0; counter < operator.getCallCount(); counter++) {
-                schedules = operator.call(schedules);
-                calculate();
-            }
-        }
-        graph();
-        save();
-        return bestSchedule;
     }
 
-    private void initialize() {
-        for (Schedule schedule : schedules) {
-            List<Task> tasks = schedule.getTasks();
-            shuffle(tasks);
-            for (Task task : tasks) {
-                schedule.assignRandomResourceToTask(task);
-            }
-        }
-        calculate();
-    }
-
-    private void calculate() {
-        for (Schedule schedule : schedules) {
-            schedule.calculate();
-            if (bestSchedule == null || schedule.getFitness() < bestSchedule.getFitness()) {
-                bestSchedule = new Schedule(schedule);
-            }
+    private void calculateFitness() {
+        schedules.forEach(Schedule::calculateFitness);
+        Schedule schedule = schedules.stream().sorted().findFirst().get();
+        if (bestSchedule.isEmpty() || schedule.getFitness() < bestSchedule.get().getFitness()) {
+            bestSchedule = Optional.of(new Schedule(schedule));
         }
         results.add(new Result(schedules));
     }
 
-    private boolean done() {
-        return currentTimeMillis() - timeStart > timeLimit || passCounter++ > passLimit;
-    }
-
-    private void graph() {
-        saveGraphToFile(results, filename);
-    }
-
-    private void save() {
-        saveScheduleToFile(bestSchedule, filename);
-    }
 }

@@ -1,28 +1,17 @@
 package it.zerko.msrcpsp.problem;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class Skill {
 
     private String name;
     private int level;
 
-    public Skill(String name, int level) {
-        this.name = name;
-        this.level = level;
+    public boolean isSufficient(Skill skill) {
+        return name.equals(skill.getName()) && level <= skill.getLevel();
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
 }

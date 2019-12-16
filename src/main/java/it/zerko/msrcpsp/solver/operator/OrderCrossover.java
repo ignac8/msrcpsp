@@ -2,17 +2,16 @@ package it.zerko.msrcpsp.solver.operator;
 
 import it.zerko.msrcpsp.problem.Schedule;
 import it.zerko.msrcpsp.problem.Task;
+import org.apache.commons.lang3.RandomUtils;
 
+import java.util.Collections;
 import java.util.List;
-
-import static java.lang.Math.min;
-import static java.util.Collections.swap;
-import static org.apache.commons.lang3.RandomUtils.nextInt;
+import java.util.stream.IntStream;
 
 public class OrderCrossover extends Crossover {
 
-    public OrderCrossover(int callCount, double chance) {
-        super(callCount, chance);
+    public OrderCrossover(double chance) {
+        super(chance);
     }
 
     @Override
@@ -21,22 +20,19 @@ public class OrderCrossover extends Crossover {
         List<Task> secondTasks = secondSchedule.getTasks();
         List<Task> firstTasksCopy = new Schedule(firstSchedule).getTasks();
         List<Task> secondTasksCopy = new Schedule(secondSchedule).getTasks();
-        int randomInt = nextInt(0, min(firstTasks.size(), secondTasks.size()));
-        temp(firstTasks, secondTasksCopy, randomInt);
-        temp(secondTasks, firstTasksCopy, randomInt);
+        int randomInt = RandomUtils.nextInt(0, Math.min(firstTasks.size(), secondTasks.size()));
+        swaps(firstTasks, secondTasksCopy, randomInt);
+        swaps(secondTasks, firstTasksCopy, randomInt);
     }
 
-    private void temp(List<Task> tasks, List<Task> tasksCopy, int randomInt) {
-        for (int outerCounter = 0; outerCounter < randomInt; outerCounter++) {
-            if (tasks.get(outerCounter).getTaskId() != tasksCopy.get(outerCounter).getTaskId()) {
-                int foundPos = -1;
-                for (int innerCounter = 0; outerCounter < tasks.size() && foundPos == -1; innerCounter++) {
-                    if (tasks.get(innerCounter).getTaskId() == tasksCopy.get(outerCounter).getTaskId()) {
-                        foundPos = innerCounter;
-                    }
-                }
-                swap(tasks, outerCounter, foundPos);
-            }
-        }
+    private void swaps(List<Task> tasks, List<Task> tasksCopy, int crossoverLimit) {
+        IntStream.range(0, crossoverLimit).forEach(position -> swap(tasks, tasksCopy, position));
+    }
+
+    private void swap(List<Task> tasks, List<Task> tasksCopy, int positionInCopy) {
+        int position = IntStream.range(0, tasks.size())
+                .filter(innerCounter -> tasks.get(innerCounter).getTaskId() == tasksCopy.get(positionInCopy).getTaskId())
+                .findFirst().getAsInt();
+        Collections.swap(tasks, positionInCopy, position);
     }
 }

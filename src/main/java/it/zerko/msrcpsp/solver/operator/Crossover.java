@@ -1,28 +1,23 @@
 package it.zerko.msrcpsp.solver.operator;
 
 import it.zerko.msrcpsp.problem.Schedule;
+import org.apache.commons.lang3.RandomUtils;
 
 import java.util.List;
-
-import static org.apache.commons.lang3.RandomUtils.nextDouble;
+import java.util.stream.IntStream;
 
 public abstract class Crossover extends Operator {
     private double chance;
 
-    public Crossover(int callCount, double chance) {
-        super(callCount);
+    public Crossover(double chance) {
         this.chance = chance;
     }
 
     @Override
-    public List<Schedule> call(List<Schedule> schedules) {
-        for (int counter = 0; counter < schedules.size() - 1; counter += 2) {
-            Schedule firstSchedule = schedules.get(counter);
-            Schedule secondSchedule = schedules.get(counter + 1);
-            if (nextDouble(0, 1) < chance) {
-                crossover(firstSchedule, secondSchedule);
-            }
-        }
+    public List<Schedule> modify(List<Schedule> schedules) {
+        IntStream.iterate(0, counter -> counter < schedules.size() - 1, counter -> counter + 2)
+                .filter(counter -> RandomUtils.nextDouble(0, 1) < chance)
+                .forEach(counter -> crossover(schedules.get(counter), schedules.get(counter + 1)));
         return schedules;
     }
 

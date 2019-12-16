@@ -7,16 +7,13 @@ import java.util.List;
 public abstract class Mutation extends Operator {
     protected double chance;
 
-    public Mutation(int callCount, double chance) {
-        super(callCount);
+    public Mutation(double chance) {
         this.chance = chance;
     }
 
     @Override
-    public List<Schedule> call(List<Schedule> schedules) {
-        for (Schedule schedule : schedules) {
-            mutation(schedule);
-        }
+    public List<Schedule> modify(List<Schedule> schedules) {
+        schedules.forEach(this::mutation);
         return schedules;
     }
 

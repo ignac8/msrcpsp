@@ -13,7 +13,6 @@
     <jfreechart.version>1.5.0</jfreechart.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <commons-lang3.version>3.9</commons-lang3.version>
-    <jcommon.version>1.0.24</jcommon.version>
     <lombok.version>1.18.10</lombok.version>
   </properties>
 
@@ -37,11 +36,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${commons-lang3.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jfree</groupId>
-      <artifactId>jcommon</artifactId>
-      <version>${jcommon.version}</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
