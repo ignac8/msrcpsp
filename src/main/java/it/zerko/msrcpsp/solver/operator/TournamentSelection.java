@@ -27,7 +27,7 @@ public class TournamentSelection extends Operator {
         return new Schedule(IntStream.range(0, tournamentSize)
                 .map(i -> RandomUtils.nextInt(0, schedules.size()))
                 .mapToObj(schedules::get)
-                .max(Comparator.naturalOrder())
+                .min(Comparator.naturalOrder())
                 .get());
     }
 }
