@@ -10,3 +10,5 @@ doc/~*.tmp
 doc/~$*
 /.idea/*
 /target/*
+/notebooks/.ipynb_checkpoints/*
+/dependency-reduced-pom.xml

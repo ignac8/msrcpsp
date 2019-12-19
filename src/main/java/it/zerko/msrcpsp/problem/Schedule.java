@@ -6,7 +6,9 @@ import org.apache.commons.lang3.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -132,6 +134,31 @@ public class Schedule implements Comparable<Schedule> {
                 .filter(task -> task.getTaskId() == taskId)
                 .findFirst()
                 .get();
+    }
+
+    public List<String> toSolution() {
+        Map<Integer, List<Task>> map = new LinkedHashMap<>();
+        tasks.forEach(task -> {
+            int startTime = task.getEndTime().get() - task.getDuration();
+            List<Task> list = map.getOrDefault(startTime, new ArrayList<>());
+            list.add(task);
+            map.put(startTime, list);
+        });
+        return map.entrySet().stream()
+                .sorted(Comparator.comparingInt(Map.Entry::getKey))
+                .map(this::startTimeToString)
+                .collect(Collectors.toList());
+    }
+
+    private String startTimeToString(Map.Entry<Integer, List<Task>> entry) {
+        return String.format("%d %s",
+                entry.getKey(),
+                entry.getValue()
+                        .stream()
+                        .map(task -> String.format("%d-%d",
+                                getAssignedResources().get(task).getResourceId(),
+                                task.getTaskId()))
+                        .collect(Collectors.joining(" ")));
     }
 
     @Override
