@@ -4,10 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.RandomUtils;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.gantt.TaskSeries;
+import org.jfree.data.gantt.TaskSeriesCollection;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -166,6 +172,43 @@ public class Schedule implements Comparable<Schedule> {
                                 getAssignedResources().get(task).getResourceId(),
                                 task.getTaskId()))
                         .collect(Collectors.joining(" ")));
+    }
+
+    public JFreeChart toGraph() {
+        TaskSeriesCollection dataset = new TaskSeriesCollection();
+        TaskSeries taskSeries = new TaskSeries("TaskSeries");
+        this.getAssignedResources()
+                .entrySet()
+                .stream()
+                .collect(Collectors.groupingBy(Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey, Collectors.toList())))
+                .entrySet()
+                .stream()
+                .map(this::getChartTaskSeries)
+                .forEach(taskSeries::add);
+        dataset.add(taskSeries);
+        return ChartFactory.createGanttChart("Harmonogram", "Category axis label", "Date axis label", dataset);
+    }
+
+    private org.jfree.data.gantt.Task getChartTaskSeries(Map.Entry<Resource, List<Task>> entry) {
+        Resource resource = entry.getKey();
+        List<Task> tasks = entry.getValue();
+        int tasksStartTime = tasks.stream()
+                .mapToInt(task -> task.getEndTime().get() - task.getDuration())
+                .min()
+                .getAsInt();
+        int tasksEndTime = tasks.stream()
+                .mapToInt(task -> task.getEndTime().get())
+                .max()
+                .getAsInt();
+        org.jfree.data.gantt.Task chartTask = new org.jfree.data.gantt.Task(String.format("Resource %d", resource.getResourceId()),
+                Date.from(ZonedDateTime.now().plusDays(tasksStartTime).toInstant()),
+                Date.from(ZonedDateTime.now().plusDays(tasksEndTime).toInstant()));
+        tasks.stream()
+                .map(task -> new org.jfree.data.gantt.Task(String.format("Task %d", task.getTaskId()),
+                        Date.from(ZonedDateTime.now().plusDays(task.getEndTime().get() - task.getDuration()).toInstant()),
+                        Date.from(ZonedDateTime.now().plusDays(task.getEndTime().get()).toInstant())))
+                .forEach(chartTask::addSubtask);
+        return chartTask;
     }
 
     @Override
