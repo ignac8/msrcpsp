@@ -27,6 +27,7 @@ public class Solver implements Runnable {
     private int passLimit;
     private LocalDateTime timeStart;
     private Duration timeLimit;
+    private Duration timeTaken;
     private Optional<Schedule> bestSchedule;
     private List<Result> results;
 
@@ -37,6 +38,7 @@ public class Solver implements Runnable {
         this.passLimit = passLimit;
         this.timeStart = LocalDateTime.now();
         this.timeLimit = timeLimit;
+        this.timeTaken = Duration.ZERO;
         this.bestSchedule = Optional.empty();
         this.results = new LinkedList<>();
     }
@@ -49,6 +51,7 @@ public class Solver implements Runnable {
             operators.forEach(operator -> schedules = operator.modify(schedules));
             calculateFitness();
         }
+        timeTaken = Duration.between(timeStart, LocalDateTime.now());
     }
 
     private void calculateFitness() {

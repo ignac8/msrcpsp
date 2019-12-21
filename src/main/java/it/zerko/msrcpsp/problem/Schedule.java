@@ -2,6 +2,7 @@ package it.zerko.msrcpsp.problem;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.util.ArrayList;
@@ -12,9 +13,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@ToString
 @Getter
 @Setter
 public class Schedule implements Comparable<Schedule> {
@@ -26,26 +29,33 @@ public class Schedule implements Comparable<Schedule> {
     private Map<Task, List<Task>> preconditionsForTasks;
     private Map<Task, List<Resource>> permittedResources;
     private Map<Task, Resource> assignedResources;
+    private Map<Integer, Task> tasksWithIds;
+    private Map<Integer, Resource> resourcesWithIds;
 
     public Schedule(Schedule copiedSchedule) {
         tasks = copiedSchedule.getTasks().stream().map(Task::new).collect(Collectors.toList());
+        tasksWithIds = tasks.stream().collect(Collectors.toMap(Task::getTaskId, Function.identity()));
         resources = copiedSchedule.getResources().stream().map(Resource::new).collect(Collectors.toList());
+        resourcesWithIds = resources.stream().collect(Collectors.toMap(Resource::getResourceId, Function.identity()));
         totalTime = copiedSchedule.getTotalTime();
         fitness = copiedSchedule.getFitness();
         preconditionsForTasks = new HashMap<>();
         copiedSchedule.getPreconditionsForTasks().forEach((task, preconditions) -> preconditionsForTasks.put(getTaskWithId(task.getTaskId()),
-                preconditions.stream().map(task1 -> getTaskWithId(task1.getTaskId())).collect(Collectors.toList())));
+                preconditions.stream().map(precondition -> getTaskWithId(precondition.getTaskId())).collect(Collectors.toList())));
         permittedResources = new HashMap<>();
         copiedSchedule.getPermittedResources().forEach((task, resources) -> permittedResources.put(getTaskWithId(task.getTaskId()),
-                this.resources.stream().map(resource -> getResourceWithId(resource.getResourceId())).collect(Collectors.toList())));
+                resources.stream().map(resource -> getResourceWithId(resource.getResourceId())).collect(Collectors.toList())));
         assignedResources = new HashMap<>();
-        copiedSchedule.getAssignedResources().forEach((task, resource) -> assignedResources.put(getTaskWithId(task.getTaskId()), getResourceWithId(resource.getResourceId())));
+        copiedSchedule.getAssignedResources().forEach((task, resource) -> assignedResources.put(getTaskWithId(task.getTaskId()),
+                getResourceWithId(resource.getResourceId())));
     }
 
     public Schedule(List<String> lines) {
         LineType lineType = LineType.UNKNOWN;
         resources = new ArrayList<>();
         tasks = new ArrayList<>();
+        tasksWithIds = new HashMap<>();
+        resourcesWithIds = new HashMap<>();
         preconditionsForTasks = new HashMap<>();
         permittedResources = new HashMap<>();
         assignedResources = new HashMap<>();
@@ -64,7 +74,9 @@ public class Schedule implements Comparable<Schedule> {
                         List<Skill> skills = IntStream.iterate(2, counter -> counter < split.length, counter -> counter + 2)
                                 .mapToObj(counter -> new Skill(split[counter], Integer.parseInt(split[counter + 1])))
                                 .collect(Collectors.toList());
-                        resources.add(new Resource(resourceId, skills));
+                        Resource resource = new Resource(resourceId, skills);
+                        resources.add(resource);
+                        resourcesWithIds.put(resourceId, resource);
                         break;
                     case TASK:
                         int taskId = Integer.parseInt(split[0]);
@@ -72,12 +84,13 @@ public class Schedule implements Comparable<Schedule> {
                         Skill requiredSkill = new Skill(split[2], Integer.parseInt(split[3]));
                         Task task = new Task(taskId, duration, requiredSkill);
                         tasks.add(task);
+                        tasksWithIds.put(taskId, task);
                         preconditionsForTasks.put(task, Arrays.stream(split, 4, split.length)
                                 .map(Integer::parseInt)
                                 .map(this::getTaskWithId)
                                 .collect(Collectors.toList()));
                         permittedResources.put(task, resources.stream()
-                                .filter(resource -> resource.canSolve(task))
+                                .filter(possibleResource -> possibleResource.canSolve(task))
                                 .collect(Collectors.toList()));
                         break;
                     case UNKNOWN:
@@ -123,17 +136,11 @@ public class Schedule implements Comparable<Schedule> {
     }
 
     public Resource getResourceWithId(int resourceId) {
-        return resources.stream()
-                .filter(resource -> resource.getResourceId() == resourceId)
-                .findFirst()
-                .get();
+        return resourcesWithIds.get(resourceId);
     }
 
     public Task getTaskWithId(int taskId) {
-        return tasks.stream()
-                .filter(task -> task.getTaskId() == taskId)
-                .findFirst()
-                .get();
+        return tasksWithIds.get(taskId);
     }
 
     public List<String> toSolution() {

@@ -2,9 +2,11 @@ package it.zerko.msrcpsp.problem;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Optional;
 
+@ToString
 @Getter
 @Setter
 public class Task {

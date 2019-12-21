@@ -38,10 +38,7 @@ public class Main {
         ImageIO.write(solver.toGraph().createBufferedImage(1200, 600),
                 "png",
                 Paths.get("test.png").toFile());
-        int debug = 1;
-
-        List<String> scheduleInText = Files.readAllLines(Paths.get("..\\datasets\\100_5_20_9_D3.def"));
-        String asd = String.join("\n", scheduleInText);
-
+        System.out.println(solver.getBestSchedule().get().getFitness());
+        System.out.println(solver.getTimeTaken());
     }
 }
