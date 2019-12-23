@@ -1,5 +1,6 @@
-package it.zerko.msrcpsp.solver.operator;
+package it.zerko.msrcpsp.operator.mutation;
 
+import it.zerko.msrcpsp.operator.Operator;
 import it.zerko.msrcpsp.problem.Schedule;
 
 import java.util.List;

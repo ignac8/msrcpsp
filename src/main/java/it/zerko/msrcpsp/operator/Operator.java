@@ -1,4 +1,4 @@
-package it.zerko.msrcpsp.solver.operator;
+package it.zerko.msrcpsp.operator;
 
 import it.zerko.msrcpsp.problem.Schedule;
 

@@ -1,7 +1,7 @@
 package it.zerko.msrcpsp.solver;
 
+import it.zerko.msrcpsp.operator.Operator;
 import it.zerko.msrcpsp.problem.Schedule;
-import it.zerko.msrcpsp.solver.operator.Operator;
 import lombok.Getter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -11,15 +11,13 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Getter
-public class Solver implements Runnable {
+public class Solver {
 
     private List<Schedule> schedules;
     private List<Operator> operators;
@@ -31,8 +29,8 @@ public class Solver implements Runnable {
     private Optional<Schedule> bestSchedule;
     private List<Result> results;
 
-    public Solver(Schedule defaultSchedule, int populationSize, List<Operator> operators, int passLimit, Duration timeLimit) {
-        this.schedules = IntStream.range(0, populationSize).mapToObj(i -> defaultSchedule).collect(Collectors.toList());
+    public Solver(List<Schedule> schedules, List<Operator> operators, int passLimit, Duration timeLimit) {
+        this.schedules = schedules;
         this.operators = operators;
         this.passCounter = 0;
         this.passLimit = passLimit;
@@ -43,10 +41,7 @@ public class Solver implements Runnable {
         this.results = new LinkedList<>();
     }
 
-    public void run() {
-        schedules.forEach(schedule -> Collections.shuffle(schedule.getTasks()));
-        schedules.forEach(Schedule::assignRandomResourcesToTasks);
-        calculateFitness();
+    public void solve() {
         while (!(Duration.between(timeStart, LocalDateTime.now()).compareTo(timeLimit) > 0 || passCounter++ > passLimit)) {
             operators.forEach(operator -> schedules = operator.modify(schedules));
             calculateFitness();
