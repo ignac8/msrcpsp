@@ -17,6 +17,9 @@
         <commons-lang3.version>3.9</commons-lang3.version>
         <lombok.version>1.18.10</lombok.version>
         <maven-shade-plugin.version>2.3</maven-shade-plugin.version>
+        <commons-math3.version>3.6.1</commons-math3.version>
+        <imopse.version>1.0</imopse.version>
+        <testng.version>7.1.0</testng.version>
     </properties>
 
     <dependencies>
@@ -35,6 +38,24 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>${commons-math3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>pl.wroc.pwr.ii.imopse</groupId>
+            <artifactId>validator</artifactId>
+            <version>${imopse.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/tools/validator.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
