@@ -10,6 +10,10 @@ import it.zerko.msrcpsp.operator.selection.TournamentSelection;
 import it.zerko.msrcpsp.problem.Schedule;
 import it.zerko.msrcpsp.solver.Solver;
 import lombok.SneakyThrows;
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math3.stat.descriptive.rank.Min;
+import org.jfree.data.statistics.MeanAndStandardDeviation;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -19,8 +23,10 @@ import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -38,7 +44,7 @@ public class Main {
         int initializerMultiplier = 1;
         int tournamentSize = 10;
         double crossoverChance = 1;
-        double mutationChance = 0.02;
+        double mutationChance = 0.005;
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss"));
         Files.createDirectories(Paths.get("results\\gantts"));
         Files.createDirectories(Paths.get("results\\graphs"));
@@ -54,6 +60,15 @@ public class Main {
                 .peek(entry -> saveGantt(entry.getKey(), entry.getValue(), date))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
+        double[] fitnesses = solvers.stream()
+                .map(Solver::getBestSchedule)
+                .map(Optional::get)
+                .map(Schedule::getFitness)
+                .mapToDouble(a->a)
+                .toArray();
+        System.out.println(new Min().evaluate(fitnesses));
+        System.out.println(new Mean().evaluate(fitnesses));
+        System.out.println(new StandardDeviation().evaluate(fitnesses));
         System.out.println(Duration.between(timeStart, LocalDateTime.now()));
     }
 
@@ -77,11 +92,6 @@ public class Main {
     }
 
     @SneakyThrows
-    private Solver getFuture(Future<Solver> solverFuture) {
-        return solverFuture.get();
-    }
-
-    @SneakyThrows
     private Solver prepareSolver(int populationSize, int passLimit, int initializerMultiplier,
                                  int tournamentSize, double crossoverChance, double mutationChance) {
         List<Operator> operators = List.of(
@@ -90,9 +100,9 @@ public class Main {
                 new ResourceCrossover(crossoverChance),
                 new OrderMutation(mutationChance),
                 new ResourceMutation(mutationChance));
-        List<String> lines = Files.readAllLines(Paths.get("datasets/100_5_20_9_D3.def"));
+        List<String> lines = Files.readAllLines(Paths.get("datasets\\200_40_133_15.def"));
         List<Schedule> schedules = new Initializer().initialize(lines, populationSize, initializerMultiplier);
-        return new Solver(schedules, operators, passLimit, Duration.ofMinutes(1));
+        return new Solver(schedules, operators, passLimit, Duration.ofHours(1));
     }
 
 }
