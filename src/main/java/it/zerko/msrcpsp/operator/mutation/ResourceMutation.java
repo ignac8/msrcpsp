@@ -1,7 +1,6 @@
 package it.zerko.msrcpsp.operator.mutation;
 
 import it.zerko.msrcpsp.problem.Schedule;
-import org.apache.commons.lang3.RandomUtils;
 
 public class ResourceMutation extends Mutation {
 
@@ -11,9 +10,6 @@ public class ResourceMutation extends Mutation {
 
     @Override
     protected void mutation(Schedule schedule) {
-        schedule.getTasks()
-                .stream()
-                .filter(task -> RandomUtils.nextDouble(0, 1) < chance)
-                .forEach(schedule::assignRandomResourceToTask);
+        schedule.mutateResource();
     }
 }

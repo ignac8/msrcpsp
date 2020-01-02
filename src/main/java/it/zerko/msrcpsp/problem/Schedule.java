@@ -12,6 +12,8 @@ import org.jfree.data.gantt.TaskSeriesCollection;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @ToString
 @Getter
@@ -136,7 +139,7 @@ public class Schedule implements Comparable<Schedule> {
         tasks.forEach(this::assignRandomResourceToTask);
     }
 
-    public void assignRandomResourceToTask(Task task) {
+    private void assignRandomResourceToTask(Task task) {
         List<Resource> permittedResources = this.permittedResources.get(task);
         assignedResources.put(task, permittedResources.get(RandomUtils.nextInt(0, permittedResources.size())));
     }
@@ -209,6 +212,83 @@ public class Schedule implements Comparable<Schedule> {
                         Date.from(ZonedDateTime.now().plusDays(task.getEndTime().get()).toInstant())))
                 .forEach(chartTask::addSubtask);
         return chartTask;
+    }
+
+    public List<Schedule> getResourceNeighbours() {
+        return tasks.stream()
+                .map(this::getResourceNeighbours)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+    private List<Schedule> getResourceNeighbours(Task task) {
+        return permittedResources.get(task).stream()
+                .filter(resource -> !resource.equals(assignedResources.get(task)))
+                .map(resource -> getResourceNeighbour(task, resource))
+                .collect(Collectors.toList());
+    }
+
+    private Schedule getResourceNeighbour(Task task, Resource resource) {
+        Schedule schedule = new Schedule(this);
+        schedule.mutateResource(task, resource);
+        return schedule;
+    }
+
+    private void mutateResource(Task task, Resource resource) {
+        getAssignedResources().put(
+                getTaskWithId(task.getTaskId()),
+                getResourceWithId(resource.getResourceId()));
+    }
+
+    public Schedule getResourceNeighbour() {
+        Schedule schedule = new Schedule(this);
+        schedule.mutateResource();
+        return schedule;
+    }
+
+    public void mutateResource() {
+        Task task = tasks.get(RandomUtils.nextInt(0, tasks.size()));
+        List<Resource> possibleResources = permittedResources.get(task).stream()
+                .filter(permittedResource -> !permittedResource.equals(assignedResources.get(task)))
+                .collect(Collectors.toList());
+        if (!possibleResources.isEmpty()) {
+            Resource resource = possibleResources.get(RandomUtils.nextInt(0, possibleResources.size()));
+            mutateResource(task, resource);
+        }
+    }
+
+    public List<Schedule> getOrderNeighbours() {
+        return IntStream.range(0, tasks.size() - 1)
+                .mapToObj(this::getOrderNeighbours)
+                .flatMap(Function.identity())
+                .collect(Collectors.toList());
+    }
+
+    private Stream<Schedule> getOrderNeighbours(int firstPosition) {
+        return IntStream.range(firstPosition, tasks.size())
+                .mapToObj(secondPosition -> getOrderNeighbour(firstPosition, secondPosition));
+    }
+
+    private Schedule getOrderNeighbour(int firstPosition, int secondPosition) {
+        Schedule schedule = new Schedule(this);
+        schedule.mutateOrder(firstPosition, secondPosition);
+        return schedule;
+    }
+
+    private void mutateOrder(int firstPosition, int secondPosition) {
+        Collections.swap(tasks, firstPosition, secondPosition);
+    }
+
+    public Schedule getOrderNeighbour() {
+        Schedule schedule = new Schedule(this);
+        schedule.mutateOrder();
+        return schedule;
+    }
+
+    public void mutateOrder() {
+        int firstPosition = RandomUtils.nextInt(0, tasks.size() - 1);
+        int secondPosition = RandomUtils.nextInt(firstPosition, tasks.size());
+        mutateOrder(firstPosition, secondPosition);
     }
 
     @Override

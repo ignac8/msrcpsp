@@ -9,8 +9,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -21,35 +19,24 @@ public class Solver {
 
     private List<Schedule> schedules;
     private List<Operator> operators;
-    private int passCounter;
     private int passLimit;
-    private LocalDateTime timeStart;
-    private Duration timeLimit;
-    private Duration timeTaken;
     private Optional<Schedule> bestSchedule;
     private List<Result> results;
 
-    public Solver(List<Schedule> schedules, List<Operator> operators, int passLimit, Duration timeLimit) {
+    public Solver(List<Schedule> schedules, List<Operator> operators, int passLimit) {
         this.schedules = schedules;
         this.operators = operators;
-        this.passCounter = 0;
         this.passLimit = passLimit;
-        this.timeStart = LocalDateTime.now();
-        this.timeLimit = timeLimit;
-        this.timeTaken = Duration.ZERO;
         this.bestSchedule = Optional.empty();
         this.results = new LinkedList<>();
     }
 
     public void solve() {
-        while (!(Duration.between(timeStart, LocalDateTime.now()).compareTo(timeLimit) > 0 || passCounter++ > passLimit)) {
-            operators.forEach(operator -> schedules = operator.modify(schedules));
-            calculateFitness();
-        }
-        timeTaken = Duration.between(timeStart, LocalDateTime.now());
+        IntStream.range(0, passLimit).forEach(i -> pass());
     }
 
-    private void calculateFitness() {
+    private void pass() {
+        operators.forEach(operator -> schedules = operator.modify(schedules));
         schedules.forEach(Schedule::calculateFitness);
         Schedule schedule = schedules.stream().sorted().findFirst().get();
         if (bestSchedule.isEmpty() || schedule.getFitness() < bestSchedule.get().getFitness()) {

@@ -19,7 +19,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.time.Duration;
 import java.util.List;
 
 public class ExternalScheduleValidatorTests {
@@ -42,7 +41,7 @@ public class ExternalScheduleValidatorTests {
                 new ResourceMutation(mutationChance));
         List<String> lines = Files.readAllLines(definition);
         List<Schedule> schedules = new Initializer().initialize(lines, populationSize, initializerMultiplier);
-        Solver solver = new Solver(schedules, operators, passLimit, Duration.ofHours(1));
+        Solver solver = new Solver(schedules, operators, passLimit);
         solver.solve();
         Files.write(solution,
                 solver.getBestSchedule().get().toSolution(),
