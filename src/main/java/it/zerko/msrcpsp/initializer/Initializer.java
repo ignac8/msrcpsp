@@ -9,13 +9,12 @@ import java.util.stream.IntStream;
 
 public class Initializer {
 
-    public List<Schedule> initialize(List<String> lines, int count, int multiplier) {
-        List<Schedule> schedules = IntStream.range(0, count * multiplier)
+    public List<Schedule> initialize(List<String> lines, int count) {
+        List<Schedule> schedules = IntStream.range(0, count)
                 .mapToObj(i -> new Schedule(lines))
                 .peek(Schedule::assignRandomResourcesToTasks)
                 .peek(Schedule::calculateFitness)
                 .sorted()
-                .limit(count)
                 .collect(Collectors.toList());
         Collections.shuffle(schedules);
         return schedules;

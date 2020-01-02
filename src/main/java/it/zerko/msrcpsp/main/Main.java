@@ -12,6 +12,7 @@ import org.apache.commons.math3.stat.descriptive.rank.Min;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,21 +27,19 @@ public class Main {
     }
 
     public void main() {
-        int solverCount = 10;
+        int solverCount = 16;
         int populationSize = 100;
         int passLimit = 1000;
-        int initializerMultiplier = 1;
         int tournamentSize = 5;
         double crossoverChance = 1;
         double mutationChance = 1;
-        int searchSize = 1;
         List<String> datasets = List.of(
                 "100_5_20_9_D3",
                 "200_40_133_15"
         );
         List<Algorithm> algorithms = List.of(
                 new GeneticAlgorithm(tournamentSize, crossoverChance, mutationChance),
-                new LocalSearchAlgorithm(searchSize)
+                new LocalSearchAlgorithm()
         );
         InputOutputHelper inputOutputHelper = new InputOutputHelper();
         LocalDateTime timeStart = LocalDateTime.now();
@@ -50,8 +49,7 @@ public class Main {
                 .flatMap(Collection::stream)
                 .map(category -> multiplyCategories(category, solverCount))
                 .flatMap(Collection::stream)
-                .map(category -> prepareRun(inputOutputHelper, populationSize, passLimit, initializerMultiplier,
-                        category, counter, timeStart))
+                .map(category -> prepareRun(inputOutputHelper, populationSize, passLimit, category, counter, timeStart))
                 .collect(Collectors.toList());
         runs.parallelStream()
                 .peek(run -> run.getSolver().solve())
@@ -60,6 +58,8 @@ public class Main {
                 .peek(inputOutputHelper::saveGantt)
                 .collect(Collectors.groupingBy(Run::getCategory))
                 .entrySet()
+                .stream()
+                .sorted(Comparator.comparing(entry -> entry.getKey().getAlgorithm() + entry.getKey().getDataset()))
                 .forEach(this::printStatistics);
         System.out.println(Duration.between(timeStart, LocalDateTime.now()));
     }
@@ -92,12 +92,10 @@ public class Main {
                 .collect(Collectors.toList());
     }
 
-    private Run prepareRun(InputOutputHelper inputOutputHelper, int populationSize, int passLimit,
-                           int initializerMultiplier, Category category,
+    private Run prepareRun(InputOutputHelper inputOutputHelper, int populationSize, int passLimit, Category category,
                            AtomicInteger runCounter, LocalDateTime timeStart) {
         return new Run(runCounter.getAndIncrement(), category, category.getAlgorithm().prepareSolver(
-                inputOutputHelper.readDataset(category.getDataset()), populationSize, initializerMultiplier,
-                passLimit), timeStart);
+                inputOutputHelper.readDataset(category.getDataset()), populationSize, passLimit), timeStart);
     }
 
 }

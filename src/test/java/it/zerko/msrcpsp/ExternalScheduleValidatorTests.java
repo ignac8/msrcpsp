@@ -29,10 +29,9 @@ public class ExternalScheduleValidatorTests {
         Path solution = Files.createTempFile("externalScheduleValidatorTest", ".sol");
         int populationSize = 10;
         int passLimit = 100;
-        int initializerMultiplier = 1;
-        int tournamentSize = 10;
+        int tournamentSize = 5;
         double crossoverChance = 1;
-        double mutationChance = 0.005;
+        double mutationChance = 1;
         List<Operator> operators = List.of(
                 new TournamentSelection(tournamentSize),
                 new OrderCrossover(crossoverChance),
@@ -40,7 +39,7 @@ public class ExternalScheduleValidatorTests {
                 new OrderMutation(mutationChance),
                 new ResourceMutation(mutationChance));
         List<String> lines = Files.readAllLines(definition);
-        List<Schedule> schedules = new Initializer().initialize(lines, populationSize, initializerMultiplier);
+        List<Schedule> schedules = new Initializer().initialize(lines, populationSize);
         Solver solver = new Solver(schedules, operators, passLimit);
         solver.solve();
         Files.write(solution,

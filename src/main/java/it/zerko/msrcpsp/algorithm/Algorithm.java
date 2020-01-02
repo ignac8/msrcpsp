@@ -9,9 +9,9 @@ import java.util.List;
 
 public abstract class Algorithm {
 
-    public Solver prepareSolver(List<String> lines, int populationSize, int initializerMultiplier, int passLimit) {
+    public Solver prepareSolver(List<String> lines, int populationSize, int passLimit) {
         List<Operator> operators = prepareOperator();
-        List<Schedule> schedules = new Initializer().initialize(lines, populationSize, initializerMultiplier);
+        List<Schedule> schedules = new Initializer().initialize(lines, populationSize);
         return new Solver(schedules, operators, passLimit);
     }
 

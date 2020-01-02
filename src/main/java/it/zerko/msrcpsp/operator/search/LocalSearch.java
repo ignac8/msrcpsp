@@ -13,8 +13,6 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class LocalSearch extends Operator {
 
-    private int searchSize;
-
     @Override
     public List<Schedule> modify(List<Schedule> schedules) {
         return schedules.stream()
@@ -23,9 +21,7 @@ public class LocalSearch extends Operator {
     }
 
     private Schedule search(Schedule schedule) {
-        return Stream.concat(
-                IntStream.range(0, searchSize).mapToObj(i -> schedule.getResourceNeighbour()),
-                IntStream.range(0, searchSize).mapToObj(i -> schedule.getOrderNeighbour()))
+        return Stream.of(schedule.getResourceNeighbour(), schedule.getOrderNeighbour())
                 .peek(Schedule::calculateFitness)
                 .min(Comparator.naturalOrder())
                 .get();
