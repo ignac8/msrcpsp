@@ -9,7 +9,15 @@ import java.util.List;
 
 public abstract class Algorithm {
 
-    public Solver prepareSolver(List<String> lines, int populationSize, int passLimit) {
+    protected int populationSize;
+    protected int passLimit;
+
+    public Algorithm(int populationSize, int passLimit) {
+        this.populationSize = populationSize;
+        this.passLimit = passLimit;
+    }
+
+    public Solver prepareSolver(List<String> lines) {
         List<Operator> operators = prepareOperator();
         List<Schedule> schedules = new Initializer().initialize(lines, populationSize);
         return new Solver(schedules, operators, passLimit);

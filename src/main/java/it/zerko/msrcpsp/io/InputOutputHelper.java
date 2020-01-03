@@ -1,5 +1,6 @@
-package it.zerko.msrcpsp.main;
+package it.zerko.msrcpsp.io;
 
+import it.zerko.msrcpsp.solver.Solver;
 import lombok.SneakyThrows;
 
 import javax.imageio.ImageIO;
@@ -22,25 +23,25 @@ public class InputOutputHelper {
     }
 
     @SneakyThrows
-    public void saveSolution(Run solver) {
+    public void saveSolution(Solver solver, String filename) {
         Files.createDirectories(Paths.get(String.format("%s\\%s", resultsDirectory, solutionsDirectory)));
-        Files.write(Paths.get(String.format("%s\\%s\\%s.sol", resultsDirectory, solutionsDirectory, solver)),
-                solver.getSolver().getBestSchedule().get().toSolution(),
+        Files.write(Paths.get(String.format("%s\\%s\\%s.sol", resultsDirectory, solutionsDirectory, filename)),
+                solver.getBestSchedule().get().toSolution(),
                 StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
     @SneakyThrows
-    public void saveGraph(Run solver) {
+    public void saveGraph(Solver solver, String filename) {
         Files.createDirectories(Paths.get(String.format("%s\\%s", resultsDirectory, graphsDirectory)));
-        ImageIO.write(solver.getSolver().toGraph().createBufferedImage(1200, 600), "png",
-                Paths.get(String.format("%s\\%s\\%s.png", resultsDirectory, graphsDirectory, solver)).toFile());
+        ImageIO.write(solver.toGraph().createBufferedImage(1200, 600), "png",
+                Paths.get(String.format("%s\\%s\\%s.png", resultsDirectory, graphsDirectory, filename)).toFile());
     }
 
     @SneakyThrows
-    public void saveGantt(Run solver) {
+    public void saveGantt(Solver solver, String filename) {
         Files.createDirectories(Paths.get(String.format("%s\\%s", resultsDirectory, ganttsDirectory)));
-        ImageIO.write(solver.getSolver().getBestSchedule().get().toGraph()
+        ImageIO.write(solver.getBestSchedule().get().toGraph()
                         .createBufferedImage(2000, 1000), "png",
-                Paths.get(String.format("%s\\%s\\%s.png", resultsDirectory, ganttsDirectory, solver)).toFile());
+                Paths.get(String.format("%s\\%s\\%s.png", resultsDirectory, ganttsDirectory, filename)).toFile());
     }
 }

@@ -116,6 +116,13 @@ public class Schedule implements Comparable<Schedule> {
         fitness = resources.stream().mapToInt(Resource::getFreeTime).max().getAsInt();
     }
 
+    public void calculateFitness(List<Task> tasks) {
+        tasks.forEach(task -> task.setEndTime(Optional.empty()));
+        resources.forEach(value -> value.setFreeTime(0));
+        tasks.forEach(this::calculateFitness);
+        fitness = resources.stream().mapToInt(Resource::getFreeTime).max().getAsInt();
+    }
+
     private void calculateFitness(Task task) {
         preconditionsForTasks.get(task).forEach(this::calculateFitness);
         if (task.getEndTime().isEmpty()) {
@@ -140,8 +147,8 @@ public class Schedule implements Comparable<Schedule> {
     }
 
     private void assignRandomResourceToTask(Task task) {
-        List<Resource> permittedResources = this.permittedResources.get(task);
-        assignedResources.put(task, permittedResources.get(RandomUtils.nextInt(0, permittedResources.size())));
+        List<Resource> permittedResourcesForTask = permittedResources.get(task);
+        assignedResources.put(task, permittedResourcesForTask.get(RandomUtils.nextInt(0, permittedResourcesForTask.size())));
     }
 
     public Resource getResourceWithId(int resourceId) {
@@ -180,7 +187,7 @@ public class Schedule implements Comparable<Schedule> {
     public JFreeChart toGraph() {
         TaskSeriesCollection dataset = new TaskSeriesCollection();
         TaskSeries taskSeries = new TaskSeries("TaskSeries");
-        this.getAssignedResources()
+        assignedResources
                 .entrySet()
                 .stream()
                 .collect(Collectors.groupingBy(Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey, Collectors.toList())))
@@ -223,7 +230,6 @@ public class Schedule implements Comparable<Schedule> {
 
     private List<Schedule> getResourceNeighbours(Task task) {
         return permittedResources.get(task).stream()
-                .filter(resource -> !resource.equals(assignedResources.get(task)))
                 .map(resource -> getResourceNeighbour(task, resource))
                 .collect(Collectors.toList());
     }
@@ -248,24 +254,20 @@ public class Schedule implements Comparable<Schedule> {
 
     public void mutateResource() {
         Task task = tasks.get(RandomUtils.nextInt(0, tasks.size()));
-        List<Resource> possibleResources = permittedResources.get(task).stream()
-                .filter(permittedResource -> !permittedResource.equals(assignedResources.get(task)))
-                .collect(Collectors.toList());
-        if (!possibleResources.isEmpty()) {
-            Resource resource = possibleResources.get(RandomUtils.nextInt(0, possibleResources.size()));
-            mutateResource(task, resource);
-        }
+        Resource resource = permittedResources.get(task).get(RandomUtils.nextInt(0, permittedResources.get(task).size()));
+        mutateResource(task, resource);
+
     }
 
     public List<Schedule> getOrderNeighbours() {
-        return IntStream.range(0, tasks.size() - 1)
+        return IntStream.range(0, tasks.size())
                 .mapToObj(this::getOrderNeighbours)
                 .flatMap(Function.identity())
                 .collect(Collectors.toList());
     }
 
     private Stream<Schedule> getOrderNeighbours(int firstPosition) {
-        return IntStream.range(firstPosition, tasks.size())
+        return IntStream.range(0, tasks.size())
                 .mapToObj(secondPosition -> getOrderNeighbour(firstPosition, secondPosition));
     }
 
@@ -286,8 +288,8 @@ public class Schedule implements Comparable<Schedule> {
     }
 
     public void mutateOrder() {
-        int firstPosition = RandomUtils.nextInt(0, tasks.size() - 1);
-        int secondPosition = RandomUtils.nextInt(firstPosition, tasks.size());
+        int firstPosition = RandomUtils.nextInt(0, tasks.size());
+        int secondPosition = RandomUtils.nextInt(0, tasks.size());
         mutateOrder(firstPosition, secondPosition);
     }
 

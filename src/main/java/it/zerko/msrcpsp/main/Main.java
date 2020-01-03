@@ -2,15 +2,23 @@ package it.zerko.msrcpsp.main;
 
 import it.zerko.msrcpsp.algorithm.Algorithm;
 import it.zerko.msrcpsp.algorithm.GeneticAlgorithm;
+import it.zerko.msrcpsp.algorithm.GreedyBuilderAlgorithm;
 import it.zerko.msrcpsp.algorithm.LocalSearchAlgorithm;
+import it.zerko.msrcpsp.algorithm.SimulatedAnnealingAlgorithm;
+import it.zerko.msrcpsp.io.InputOutputHelper;
 import it.zerko.msrcpsp.problem.Schedule;
 import it.zerko.msrcpsp.solver.Solver;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Min;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -27,19 +35,35 @@ public class Main {
     }
 
     public void main() {
-        int solverCount = 16;
-        int populationSize = 100;
-        int passLimit = 1000;
+        int geneticPopulationSize = 100;
+        int geneticPassLimit = 1000;
         int tournamentSize = 5;
         double crossoverChance = 1;
         double mutationChance = 1;
+
+        int localSearchPopulationSize = 100;
+        int localSearchPassLimit = 1000;
+        int localSearchSearchSize = 1;
+
+        int simulatedAnnealingPopulationSize = 100;
+        int simulatedAnnealingPassLimit = 1000;
+        int simulatedAnnealingSearchSize = 1;
+        double maxTemp = 500;
+
+        int greedyBuilderPopulationSize = 10000;
+
+        int solverCount = 1;
         List<String> datasets = List.of(
                 "100_5_20_9_D3",
                 "200_40_133_15"
         );
         List<Algorithm> algorithms = List.of(
-                new GeneticAlgorithm(tournamentSize, crossoverChance, mutationChance),
-                new LocalSearchAlgorithm()
+                new GeneticAlgorithm(geneticPopulationSize, geneticPassLimit, tournamentSize,
+                        crossoverChance, mutationChance),
+                new LocalSearchAlgorithm(localSearchPopulationSize, localSearchPassLimit, localSearchSearchSize),
+                new SimulatedAnnealingAlgorithm(simulatedAnnealingPopulationSize, simulatedAnnealingPassLimit,
+                        maxTemp, simulatedAnnealingSearchSize),
+                new GreedyBuilderAlgorithm(greedyBuilderPopulationSize)
         );
         InputOutputHelper inputOutputHelper = new InputOutputHelper();
         LocalDateTime timeStart = LocalDateTime.now();
@@ -49,13 +73,14 @@ public class Main {
                 .flatMap(Collection::stream)
                 .map(category -> multiplyCategories(category, solverCount))
                 .flatMap(Collection::stream)
-                .map(category -> prepareRun(inputOutputHelper, populationSize, passLimit, category, counter, timeStart))
+                .map(category -> new Run(counter.getAndIncrement(), category, category.getAlgorithm()
+                        .prepareSolver(inputOutputHelper.readDataset(category.getDataset())), timeStart))
                 .collect(Collectors.toList());
         runs.parallelStream()
                 .peek(run -> run.getSolver().solve())
-                .peek(inputOutputHelper::saveSolution)
-                .peek(inputOutputHelper::saveGraph)
-                .peek(inputOutputHelper::saveGantt)
+                .peek(run -> inputOutputHelper.saveSolution(run.getSolver(), run.toString()))
+                .peek(run -> inputOutputHelper.saveGraph(run.getSolver(), run.toString()))
+                .peek(run -> inputOutputHelper.saveGantt(run.getSolver(), run.toString()))
                 .collect(Collectors.groupingBy(Run::getCategory))
                 .entrySet()
                 .stream()
@@ -92,10 +117,30 @@ public class Main {
                 .collect(Collectors.toList());
     }
 
-    private Run prepareRun(InputOutputHelper inputOutputHelper, int populationSize, int passLimit, Category category,
-                           AtomicInteger runCounter, LocalDateTime timeStart) {
-        return new Run(runCounter.getAndIncrement(), category, category.getAlgorithm().prepareSolver(
-                inputOutputHelper.readDataset(category.getDataset()), populationSize, passLimit), timeStart);
+    @AllArgsConstructor
+    @Getter
+    @EqualsAndHashCode
+    @ToString
+    public static class Category {
+        private Algorithm algorithm;
+        private String dataset;
     }
+
+    @AllArgsConstructor
+    @Getter
+    @EqualsAndHashCode
+    public static class Run {
+        private int counter;
+        private Category category;
+        private Solver solver;
+        private LocalDateTime timeStart;
+
+        @Override
+        public String toString() {
+            return String.format("%s_%s_%s_%d", timeStart.format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss")),
+                    category.getAlgorithm().getClass().getSimpleName(), category.getDataset(), counter);
+        }
+    }
+
 
 }
