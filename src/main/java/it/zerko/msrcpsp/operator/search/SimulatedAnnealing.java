@@ -39,7 +39,7 @@ public class SimulatedAnnealing extends Operator {
                 IntStream.range(0, searchSize).mapToObj(i -> schedule.getOrderNeighbour()))
                 .peek(Schedule::calculateFitness)
                 .map(neighbour -> Map.entry(neighbour,
-                        neighbour.getFitness() + RandomUtils.nextDouble(0, currentTemp)))
+                        neighbour.getFitness() + RandomUtils.nextDouble(0, Math.max(currentTemp, Math.ulp(0)))))
                 .min(Comparator.comparingDouble(Map.Entry::getValue))
                 .get()
                 .getKey();

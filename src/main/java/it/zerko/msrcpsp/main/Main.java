@@ -41,18 +41,18 @@ public class Main {
         double crossoverChance = 1;
         double mutationChance = 1;
 
-        int localSearchPopulationSize = 100;
-        int localSearchPassLimit = 1000;
+        int localSearchPopulationSize = 1;
+        int localSearchPassLimit = 100000;
         int localSearchSearchSize = 1;
 
-        int simulatedAnnealingPopulationSize = 100;
-        int simulatedAnnealingPassLimit = 1000;
+        int simulatedAnnealingPopulationSize = 1;
+        int simulatedAnnealingPassLimit = 100000;
         int simulatedAnnealingSearchSize = 1;
-        double maxTemp = 500;
+        double maxTemp = 100;
 
-        int greedyBuilderPopulationSize = 10000;
+        int greedyBuilderPopulationSize = 25;
 
-        int solverCount = 1;
+        int solverCount = 4;
         List<String> datasets = List.of(
                 "100_5_20_9_D3",
                 "200_40_133_15"
@@ -84,7 +84,7 @@ public class Main {
                 .collect(Collectors.groupingBy(Run::getCategory))
                 .entrySet()
                 .stream()
-                .sorted(Comparator.comparing(entry -> entry.getKey().getAlgorithm() + entry.getKey().getDataset()))
+                .sorted(Comparator.comparing(entry ->  entry.getKey().getDataset()+ entry.getKey().getAlgorithm()))
                 .forEach(this::printStatistics);
         System.out.println(Duration.between(timeStart, LocalDateTime.now()));
     }

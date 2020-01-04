@@ -6,6 +6,7 @@ import it.zerko.msrcpsp.problem.Schedule;
 import it.zerko.msrcpsp.problem.Task;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,6 +74,7 @@ public class GreedyBuilder extends Operator {
 
     @Getter
     @Setter
+    @ToString
     private static class SchedulePiece {
         private Task task;
         private Resource resource;
