@@ -18,7 +18,8 @@ public class OrderCrossover extends Crossover {
     protected void crossover(Schedule firstSchedule, Schedule secondSchedule) {
         Schedule firstScheduleCopy = new Schedule(firstSchedule);
         Schedule secondScheduleCopy = new Schedule(secondSchedule);
-        int randomInt = RandomUtils.nextInt(0, Math.min(firstSchedule.getTasks().size(), secondSchedule.getTasks().size()));
+        int randomInt = RandomUtils.nextInt(0, Math.min(firstSchedule.getTasks().size(),
+                secondSchedule.getTasks().size()));
         firstSchedule.setTasks(swap(firstSchedule, secondScheduleCopy, randomInt));
         secondSchedule.setTasks(swap(secondSchedule, firstScheduleCopy, randomInt));
     }

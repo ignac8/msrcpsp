@@ -4,44 +4,32 @@ import it.zerko.msrcpsp.operator.Operator;
 import it.zerko.msrcpsp.problem.Schedule;
 import org.apache.commons.lang3.RandomUtils;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class SimulatedAnnealing extends Operator {
 
+    private int passCounter;
     private double maxTemp;
-    private double currentTemp;
-    private int passLimit;
-    private int searchSize;
 
-    public SimulatedAnnealing(double maxTemp, int passLimit, int searchSize) {
+    public SimulatedAnnealing(double maxTemp) {
+        this.passCounter = 0;
         this.maxTemp = maxTemp;
-        this.currentTemp = maxTemp;
-        this.passLimit = passLimit;
-        this.searchSize = searchSize;
     }
 
     @Override
     public List<Schedule> modify(List<Schedule> schedules) {
-        currentTemp -= maxTemp / passLimit;
+        double currentTemp = maxTemp / ++passCounter;
         return schedules.stream()
-                .map(this::search)
+                .map(schedule -> search(schedule, currentTemp))
                 .collect(Collectors.toList());
     }
 
-    private Schedule search(Schedule schedule) {
-        return Stream.concat(
-                IntStream.range(0, searchSize).mapToObj(i -> schedule.getResourceNeighbour()),
-                IntStream.range(0, searchSize).mapToObj(i -> schedule.getOrderNeighbour()))
-                .peek(Schedule::calculateFitness)
-                .map(neighbour -> Map.entry(neighbour,
-                        neighbour.getFitness() + RandomUtils.nextDouble(0, Math.max(currentTemp, Math.ulp(0)))))
-                .min(Comparator.comparingDouble(Map.Entry::getValue))
-                .get()
-                .getKey();
+    private Schedule search(Schedule schedule, double currentTemp) {
+        Schedule neighbour = RandomUtils.nextBoolean() ? schedule.getResourceNeighbour() : schedule.getOrderNeighbour();
+        neighbour.calculateFitness();
+        return neighbour.getFitness() < schedule.getFitness() ||
+                RandomUtils.nextDouble(0, 1) < Math.exp(-(neighbour.getFitness() - schedule.getFitness()) / currentTemp)
+                ? neighbour : schedule;
     }
 }

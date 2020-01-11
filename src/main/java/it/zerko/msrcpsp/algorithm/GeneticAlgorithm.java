@@ -5,6 +5,7 @@ import it.zerko.msrcpsp.operator.crossover.OrderCrossover;
 import it.zerko.msrcpsp.operator.crossover.ResourceCrossover;
 import it.zerko.msrcpsp.operator.mutation.OrderMutation;
 import it.zerko.msrcpsp.operator.mutation.ResourceMutation;
+import it.zerko.msrcpsp.operator.selection.EliteSelection;
 import it.zerko.msrcpsp.operator.selection.TournamentSelection;
 
 import java.util.List;
@@ -24,11 +25,14 @@ public class GeneticAlgorithm extends Algorithm {
     }
 
     protected List<Operator> prepareOperator() {
+        EliteSelection eliteSelection = new EliteSelection();
         return List.of(
+                eliteSelection,
                 new TournamentSelection(tournamentSize),
                 new OrderCrossover(crossoverChance),
                 new ResourceCrossover(crossoverChance),
                 new OrderMutation(mutationChance),
-                new ResourceMutation(mutationChance));
+                new ResourceMutation(mutationChance),
+                eliteSelection);
     }
 }

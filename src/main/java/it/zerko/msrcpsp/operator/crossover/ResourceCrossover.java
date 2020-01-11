@@ -19,7 +19,8 @@ public class ResourceCrossover extends Crossover {
         List<Task> firstTasks = firstSchedule.getTasks();
         List<Task> secondTasks = secondSchedule.getTasks();
         int randomInt = RandomUtils.nextInt(0, Math.min(firstTasks.size(), secondTasks.size()));
-        IntStream.range(0, randomInt).forEach(outerCounter -> swapResources(firstSchedule, secondSchedule, firstTasks, outerCounter));
+        IntStream.range(0, randomInt).forEach(outerCounter ->
+                swapResources(firstSchedule, secondSchedule, firstTasks, outerCounter));
     }
 
     private void swapResources(Schedule firstSchedule, Schedule secondSchedule, List<Task> firstTasks, int position) {
@@ -27,7 +28,9 @@ public class ResourceCrossover extends Crossover {
         Resource firstResource = firstSchedule.getAssignedResources().get(firstTask);
         Task secondTask = secondSchedule.getTaskWithId(firstTask.getTaskId());
         Resource secondResource = secondSchedule.getAssignedResources().get(secondTask);
-        firstSchedule.getAssignedResources().put(firstTask, firstSchedule.getResourceWithId(secondResource.getResourceId()));
-        secondSchedule.getAssignedResources().put(secondTask, secondSchedule.getResourceWithId(firstResource.getResourceId()));
+        firstSchedule.getAssignedResources()
+                .put(firstTask, firstSchedule.getResourceWithId(secondResource.getResourceId()));
+        secondSchedule.getAssignedResources()
+                .put(secondTask, secondSchedule.getResourceWithId(firstResource.getResourceId()));
     }
 }

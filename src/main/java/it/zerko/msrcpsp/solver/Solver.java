@@ -9,7 +9,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -28,7 +28,7 @@ public class Solver {
         this.operators = operators;
         this.passLimit = passLimit;
         this.bestSchedule = Optional.empty();
-        this.results = new LinkedList<>();
+        this.results = new ArrayList<>(passLimit);
     }
 
     public void solve() {

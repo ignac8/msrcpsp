@@ -49,14 +49,16 @@ public class Schedule implements Comparable<Schedule> {
         totalTime = copiedSchedule.getTotalTime();
         fitness = copiedSchedule.getFitness();
         preconditionsForTasks = new HashMap<>();
-        copiedSchedule.getPreconditionsForTasks().forEach((task, preconditions) -> preconditionsForTasks.put(getTaskWithId(task.getTaskId()),
-                preconditions.stream().map(precondition -> getTaskWithId(precondition.getTaskId())).collect(Collectors.toList())));
+        copiedSchedule.getPreconditionsForTasks().forEach((task, preconditions) -> preconditionsForTasks.put(
+                getTaskWithId(task.getTaskId()), preconditions.stream().map(precondition ->
+                        getTaskWithId(precondition.getTaskId())).collect(Collectors.toList())));
         permittedResources = new HashMap<>();
-        copiedSchedule.getPermittedResources().forEach((task, resources) -> permittedResources.put(getTaskWithId(task.getTaskId()),
-                resources.stream().map(resource -> getResourceWithId(resource.getResourceId())).collect(Collectors.toList())));
+        copiedSchedule.getPermittedResources().forEach((task, resources) -> permittedResources.put(
+                getTaskWithId(task.getTaskId()), resources.stream().map(resource ->
+                        getResourceWithId(resource.getResourceId())).collect(Collectors.toList())));
         assignedResources = new HashMap<>();
-        copiedSchedule.getAssignedResources().forEach((task, resource) -> assignedResources.put(getTaskWithId(task.getTaskId()),
-                getResourceWithId(resource.getResourceId())));
+        copiedSchedule.getAssignedResources().forEach((task, resource) ->
+                assignedResources.put(getTaskWithId(task.getTaskId()), getResourceWithId(resource.getResourceId())));
     }
 
     public Schedule(List<String> lines) {
@@ -80,7 +82,8 @@ public class Schedule implements Comparable<Schedule> {
                 switch (lineType) {
                     case RESOURCE:
                         int resourceId = Integer.parseInt(split[0]);
-                        List<Skill> skills = IntStream.iterate(2, counter -> counter < split.length, counter -> counter + 2)
+                        List<Skill> skills = IntStream.iterate(2, counter -> counter < split.length,
+                                counter -> counter + 2)
                                 .mapToObj(counter -> new Skill(split[counter], Integer.parseInt(split[counter + 1])))
                                 .collect(Collectors.toList());
                         Resource resource = new Resource(resourceId, skills);
@@ -148,7 +151,8 @@ public class Schedule implements Comparable<Schedule> {
 
     private void assignRandomResourceToTask(Task task) {
         List<Resource> permittedResourcesForTask = permittedResources.get(task);
-        assignedResources.put(task, permittedResourcesForTask.get(RandomUtils.nextInt(0, permittedResourcesForTask.size())));
+        assignedResources.put(task, permittedResourcesForTask.get(RandomUtils.nextInt(0,
+                permittedResourcesForTask.size())));
     }
 
     public Resource getResourceWithId(int resourceId) {
@@ -190,13 +194,15 @@ public class Schedule implements Comparable<Schedule> {
         assignedResources
                 .entrySet()
                 .stream()
-                .collect(Collectors.groupingBy(Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey, Collectors.toList())))
+                .collect(Collectors.groupingBy(Map.Entry::getValue, Collectors.mapping(Map.Entry::getKey,
+                        Collectors.toList())))
                 .entrySet()
                 .stream()
                 .map(this::getChartTaskSeries)
                 .forEach(taskSeries::add);
         dataset.add(taskSeries);
-        return ChartFactory.createGanttChart("Harmonogram", "Category axis label", "Date axis label", dataset);
+        return ChartFactory.createGanttChart("Harmonogram", "Category axis label",
+                "Date axis label", dataset);
     }
 
     private org.jfree.data.gantt.Task getChartTaskSeries(Map.Entry<Resource, List<Task>> entry) {
@@ -210,7 +216,8 @@ public class Schedule implements Comparable<Schedule> {
                 .mapToInt(task -> task.getEndTime().get())
                 .max()
                 .getAsInt();
-        org.jfree.data.gantt.Task chartTask = new org.jfree.data.gantt.Task(String.format("Resource %d", resource.getResourceId()),
+        org.jfree.data.gantt.Task chartTask = new org.jfree.data.gantt.Task(String.format("Resource %d",
+                resource.getResourceId()),
                 Date.from(ZonedDateTime.now().plusDays(tasksStartTime).toInstant()),
                 Date.from(ZonedDateTime.now().plusDays(tasksEndTime).toInstant()));
         tasks.stream()
@@ -254,7 +261,8 @@ public class Schedule implements Comparable<Schedule> {
 
     public void mutateResource() {
         Task task = tasks.get(RandomUtils.nextInt(0, tasks.size()));
-        Resource resource = permittedResources.get(task).get(RandomUtils.nextInt(0, permittedResources.get(task).size()));
+        Resource resource = permittedResources.get(task).get(RandomUtils.nextInt(0,
+                permittedResources.get(task).size()));
         mutateResource(task, resource);
 
     }
