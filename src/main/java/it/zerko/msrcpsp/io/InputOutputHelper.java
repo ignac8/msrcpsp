@@ -50,11 +50,27 @@ public class InputOutputHelper {
     }
 
     @SneakyThrows
+    public List<String> readDataset(Path path) {
+        return Files.readAllLines(path);
+    }
+
+    @SneakyThrows
     public void saveSolution(Solver solver, String filename) {
         Files.createDirectories(Paths.get(String.format("%s\\%s", resultsDirectory, solutionsDirectory)));
         Files.write(Paths.get(String.format("%s\\%s\\%s.sol", resultsDirectory, solutionsDirectory, filename)),
                 solver.getBestSchedule().get().toSolution(),
                 StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    @SneakyThrows
+    public void saveSolution(Solver solver, Path path) {
+        Files.write(path, solver.getBestSchedule().get().toSolution(),
+                StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    @SneakyThrows
+    public Path prepareTempFile(String prefix, String suffix) {
+        return Files.createTempFile(prefix, suffix);
     }
 
     @SneakyThrows
