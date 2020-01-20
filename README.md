@@ -3,7 +3,6 @@ There are two ways to run this project:
 
 ## Local
 You need to have following requirements installed:
-* Python 3
 * Jupyter Notebook
 * Java 13
 * Maven 3
