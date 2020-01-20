@@ -3,7 +3,6 @@ RUN echo "deb http://ftp.de.debian.org/debian bullseye main" >> /etc/apt/sources
 RUN apt-get update
 RUN apt-get install -y wget
 RUN apt-get install -y unzip
-RUN apt-get install -y python3
 RUN apt-get install -y jupyter-notebook
 RUN apt-get install -y openjdk-13-jdk
 RUN apt-get install -y maven
