@@ -46,7 +46,7 @@ public class InputOutputHelper {
 
     @SneakyThrows
     public List<String> readDataset(String filename) {
-        return Files.readAllLines(Paths.get(String.format(datasetsDirectory + "\\%s.def", filename)));
+        return Files.readAllLines(Paths.get(String.format(datasetsDirectory + "/%s.def", filename)));
     }
 
     @SneakyThrows
@@ -56,8 +56,8 @@ public class InputOutputHelper {
 
     @SneakyThrows
     public void saveSolution(Solver solver, String filename) {
-        Files.createDirectories(Paths.get(String.format("%s\\%s", resultsDirectory, solutionsDirectory)));
-        Files.write(Paths.get(String.format("%s\\%s\\%s.sol", resultsDirectory, solutionsDirectory, filename)),
+        Files.createDirectories(Paths.get(String.format("%s/%s", resultsDirectory, solutionsDirectory)));
+        Files.write(Paths.get(String.format("%s/%s/%s.sol", resultsDirectory, solutionsDirectory, filename)),
                 solver.getBestSchedule().get().toSolution(),
                 StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
     }
@@ -75,17 +75,17 @@ public class InputOutputHelper {
 
     @SneakyThrows
     public void saveGraph(Solver solver, String filename) {
-        Files.createDirectories(Paths.get(String.format("%s\\%s", resultsDirectory, graphsDirectory)));
+        Files.createDirectories(Paths.get(String.format("%s/%s", resultsDirectory, graphsDirectory)));
         ImageIO.write(solver.toGraph().createBufferedImage(1200, 600), "png",
-                Paths.get(String.format("%s\\%s\\%s.png", resultsDirectory, graphsDirectory, filename)).toFile());
+                Paths.get(String.format("%s/%s/%s.png", resultsDirectory, graphsDirectory, filename)).toFile());
     }
 
     @SneakyThrows
     public void saveGantt(Solver solver, String filename) {
-        Files.createDirectories(Paths.get(String.format("%s\\%s", resultsDirectory, ganttsDirectory)));
+        Files.createDirectories(Paths.get(String.format("%s/%s", resultsDirectory, ganttsDirectory)));
         ImageIO.write(solver.getBestSchedule().get().toGraph()
                         .createBufferedImage(2000, 1000), "png",
-                Paths.get(String.format("%s\\%s\\%s.png", resultsDirectory, ganttsDirectory, filename)).toFile());
+                Paths.get(String.format("%s/%s/%s.png", resultsDirectory, ganttsDirectory, filename)).toFile());
     }
 
     @SneakyThrows
@@ -102,7 +102,7 @@ public class InputOutputHelper {
                 new Min().evaluate(fitnesses),
                 new Mean().evaluate(fitnesses),
                 new StandardDeviation().evaluate(fitnesses));
-        Files.write(Paths.get(String.format("%s\\%s", resultsDirectory, "results.txt")), List.of(statistics),
+        Files.write(Paths.get(String.format("%s/%s", resultsDirectory, "results.txt")), List.of(statistics),
                 StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
     }
 }

@@ -15,4 +15,4 @@ RUN rm -rf /ijava
 WORKDIR /msrcpsp
 COPY . .
 RUN mvn install -T 1C
-ENTRYPOINT jupyter notebook notebooks/ds.ipynb --ip 0.0.0.0 --no-browser --allow-root
+ENTRYPOINT jupyter notebook docs/ds.ipynb --ip 0.0.0.0 --no-browser --allow-root

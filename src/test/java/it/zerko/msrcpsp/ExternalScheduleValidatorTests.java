@@ -29,7 +29,7 @@ public class ExternalScheduleValidatorTests {
     @BeforeClass
     public void loadFiles() {
         inputOutputHelper = new InputOutputHelper();
-        definitionFile = Paths.get("datasets\\100_5_20_9_D3.def");
+        definitionFile = Paths.get("datasets/100_5_20_9_D3.def");
         solutionFile = inputOutputHelper.prepareTempFile("externalScheduleValidatorTest", ".sol");
         dataset = inputOutputHelper.readDataset(definitionFile);
     }
