@@ -1,0 +1,8 @@
+version: "3.7"
+services:
+  msrcpsp:
+    image: ignac8/msrcpsp
+    container_name: msrcpsp
+    build: .
+    ports:
+      - "8888:8888"
