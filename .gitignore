@@ -4,3 +4,4 @@ docs/~*
 target/**
 docs/.**
 dependency-reduced-pom.xml
+*.iml
