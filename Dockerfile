@@ -11,7 +11,6 @@ WORKDIR /ijava
 RUN wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip
 RUN unzip ijava-1.3.0.zip
 RUN python3 install.py --sys-prefix
-RUN rm -rf /ijava
 WORKDIR /msrcpsp
 COPY . .
 RUN mvn install -T 1C
