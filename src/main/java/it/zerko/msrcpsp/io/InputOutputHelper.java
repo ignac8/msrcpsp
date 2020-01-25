@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,8 +32,9 @@ public class InputOutputHelper {
         Set<String> solvedDatasets = Files.exists(Paths.get(resultsDirectory, "results.txt")) ?
                 Files.readAllLines(Paths.get(resultsDirectory, "results.txt"))
                         .stream()
-                        .filter(line -> line.startsWith("Dat: "))
-                        .map(line -> line.replace("Dat: ", ""))
+                        .map(line -> line.split(", "))
+                        .map(line -> line[1])
+                        .map(dataset -> dataset.replace("Dat: ", ""))
                         .collect(Collectors.toSet()) :
                 Collections.emptySet();
         return Files.walk(Paths.get(datasetsDirectory))
@@ -105,4 +107,30 @@ public class InputOutputHelper {
         Files.write(Paths.get(String.format("%s/%s", resultsDirectory, "results.txt")), List.of(statistics),
                 StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
     }
+
+    @SneakyThrows
+    public List<String> loadResults() {
+        return Files.readAllLines(Paths.get(resultsDirectory, "results.txt"))
+                .stream()
+                .map(result -> result.split(", "))
+                .collect(Collectors.groupingBy(split -> split[0]))
+                .entrySet()
+                .stream()
+                .map(results -> String.format("%s, Min: %s, Avg: %s, Std: %s", results.getKey(),
+                        calculateAverage(results, 2, "Min: "),
+                        calculateAverage(results, 3, "Avg: "),
+                        calculateAverage(results, 4, "Std: ")))
+                .collect(Collectors.toList());
+    }
+
+    private double calculateAverage(Map.Entry<String, List<String[]>> results, int index, String prefix) {
+        return results.getValue()
+                .stream()
+                .map(string -> string[index])
+                .map(string -> string.replace(prefix, ""))
+                .mapToDouble(Double::parseDouble)
+                .average()
+                .getAsDouble();
+    }
+
 }

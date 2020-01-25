@@ -46,8 +46,8 @@ public class Main {
         LocalDateTime timeStart = LocalDateTime.now();
         List<String> datasets = inputOutputHelper.getDatasets();
         Collections.shuffle(datasets);
-        datasets.forEach(dataset -> runForDataset(dataset, algorithms, inputOutputHelper, solverCount,
-                timeStart));
+        datasets.forEach(dataset -> runForDataset(dataset, algorithms, inputOutputHelper, solverCount, timeStart));
+        inputOutputHelper.loadResults().forEach(System.out::println);
         System.out.println(Duration.between(timeStart, LocalDateTime.now()));
     }
 
