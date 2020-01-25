@@ -9,9 +9,9 @@ import java.util.stream.IntStream;
 
 public class Initializer {
 
-    public List<Schedule> initialize(List<String> lines, int count) {
+    public List<Schedule> initialize(List<String> dataset, int count) {
         List<Schedule> schedules = IntStream.range(0, count)
-                .mapToObj(i -> new Schedule(lines))
+                .mapToObj(i -> new Schedule(dataset))
                 .peek(Schedule::assignRandomResourcesToTasks)
                 .peek(Schedule::calculateFitness)
                 .sorted()

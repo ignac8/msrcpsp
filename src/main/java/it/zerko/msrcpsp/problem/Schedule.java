@@ -61,7 +61,7 @@ public class Schedule implements Comparable<Schedule> {
                 assignedResources.put(getTaskWithId(task.getTaskId()), getResourceWithId(resource.getResourceId())));
     }
 
-    public Schedule(List<String> lines) {
+    public Schedule(List<String> dataset) {
         LineType lineType = LineType.UNKNOWN;
         resources = new ArrayList<>();
         tasks = new ArrayList<>();
@@ -70,7 +70,7 @@ public class Schedule implements Comparable<Schedule> {
         preconditionsForTasks = new HashMap<>();
         permittedResources = new HashMap<>();
         assignedResources = new HashMap<>();
-        for (String line : lines) {
+        for (String line : dataset) {
             if (line.startsWith("ResourceID")) {
                 lineType = LineType.RESOURCE;
             } else if (line.startsWith("TaskID")) {
@@ -190,7 +190,7 @@ public class Schedule implements Comparable<Schedule> {
 
     public JFreeChart toGraph() {
         TaskSeriesCollection dataset = new TaskSeriesCollection();
-        TaskSeries taskSeries = new TaskSeries("TaskSeries");
+        TaskSeries taskSeries = new TaskSeries("Busy");
         assignedResources
                 .entrySet()
                 .stream()
@@ -201,8 +201,8 @@ public class Schedule implements Comparable<Schedule> {
                 .map(this::getChartTaskSeries)
                 .forEach(taskSeries::add);
         dataset.add(taskSeries);
-        return ChartFactory.createGanttChart("Harmonogram", "Category axis label",
-                "Date axis label", dataset);
+        return ChartFactory.createGanttChart("Scheduling", "Resource", "Time",
+                dataset);
     }
 
     private org.jfree.data.gantt.Task getChartTaskSeries(Map.Entry<Resource, List<Task>> entry) {

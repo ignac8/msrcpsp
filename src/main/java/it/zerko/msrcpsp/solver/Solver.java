@@ -57,7 +57,7 @@ public class Solver {
         dataset.addSeries(popAvg);
         dataset.addSeries(popMax);
         return ChartFactory.createXYLineChart(
-                "Harmonogramowanie",
+                "Scheduling",
                 "Pokolenie",
                 "Ocena",
                 dataset,

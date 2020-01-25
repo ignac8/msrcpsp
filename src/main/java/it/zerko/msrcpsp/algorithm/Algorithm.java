@@ -17,9 +17,9 @@ public abstract class Algorithm {
         this.passLimit = passLimit;
     }
 
-    public Solver prepareSolver(List<String> lines) {
+    public Solver prepareSolver(List<String> dataset) {
         List<Operator> operators = prepareOperator();
-        List<Schedule> schedules = new Initializer().initialize(lines, populationSize);
+        List<Schedule> schedules = new Initializer().initialize(dataset, populationSize);
         return new Solver(schedules, operators, passLimit);
     }
 
