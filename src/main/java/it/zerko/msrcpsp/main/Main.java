@@ -9,6 +9,7 @@ import it.zerko.msrcpsp.io.InputOutputHelper;
 import it.zerko.msrcpsp.solver.Solver;
 import lombok.Getter;
 
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,7 +48,7 @@ public class Main {
         List<String> datasets = inputOutputHelper.getDatasets();
         Collections.shuffle(datasets);
         datasets.forEach(dataset -> runForDataset(dataset, algorithms, inputOutputHelper, solverCount, timeStart));
-        inputOutputHelper.loadResults().forEach(System.out::println);
+        String table = inputOutputHelper.loadResults(Paths.get("docs/results.txt"));
         System.out.println(Duration.between(timeStart, LocalDateTime.now()));
     }
 

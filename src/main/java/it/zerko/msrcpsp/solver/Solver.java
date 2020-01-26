@@ -2,6 +2,7 @@ package it.zerko.msrcpsp.solver;
 
 import it.zerko.msrcpsp.operator.Operator;
 import it.zerko.msrcpsp.problem.Schedule;
+import it.zerko.msrcpsp.statistic.GenerationStatistic;
 import lombok.Getter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -21,7 +22,7 @@ public class Solver {
     private List<Operator> operators;
     private int passLimit;
     private Optional<Schedule> bestSchedule;
-    private List<Result> results;
+    private List<GenerationStatistic> results;
 
     public Solver(List<Schedule> schedules, List<Operator> operators, int passLimit) {
         this.schedules = schedules;
@@ -42,16 +43,16 @@ public class Solver {
         if (bestSchedule.isEmpty() || schedule.getFitness() < bestSchedule.get().getFitness()) {
             bestSchedule = Optional.of(new Schedule(schedule));
         }
-        results.add(new Result(schedules));
+        results.add(new GenerationStatistic(schedules));
     }
 
     public JFreeChart toGraph() {
         XYSeries popMin = new XYSeries("Min");
         XYSeries popAvg = new XYSeries("Avg");
         XYSeries popMax = new XYSeries("Max");
-        IntStream.range(0, results.size()).forEach(counter -> popMin.add(counter, results.get(counter).getMin()));
-        IntStream.range(0, results.size()).forEach(counter -> popAvg.add(counter, results.get(counter).getAvg()));
-        IntStream.range(0, results.size()).forEach(counter -> popMax.add(counter, results.get(counter).getMax()));
+        IntStream.range(0, results.size()).forEach(counter -> popMin.add(counter, results.get(counter).getMinimum()));
+        IntStream.range(0, results.size()).forEach(counter -> popAvg.add(counter, results.get(counter).getAverage()));
+        IntStream.range(0, results.size()).forEach(counter -> popMax.add(counter, results.get(counter).getMaximum()));
         XYSeriesCollection dataset = new XYSeriesCollection();
         dataset.addSeries(popMin);
         dataset.addSeries(popAvg);
