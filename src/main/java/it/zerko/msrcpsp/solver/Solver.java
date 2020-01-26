@@ -47,9 +47,9 @@ public class Solver {
     }
 
     public JFreeChart toGraph() {
-        XYSeries popMin = new XYSeries("Min");
-        XYSeries popAvg = new XYSeries("Avg");
-        XYSeries popMax = new XYSeries("Max");
+        XYSeries popMin = new XYSeries("Minimum");
+        XYSeries popAvg = new XYSeries("Average");
+        XYSeries popMax = new XYSeries("Maximum");
         IntStream.range(0, results.size()).forEach(counter -> popMin.add(counter, results.get(counter).getMinimum()));
         IntStream.range(0, results.size()).forEach(counter -> popAvg.add(counter, results.get(counter).getAverage()));
         IntStream.range(0, results.size()).forEach(counter -> popMax.add(counter, results.get(counter).getMaximum()));
@@ -59,8 +59,8 @@ public class Solver {
         dataset.addSeries(popMax);
         return ChartFactory.createXYLineChart(
                 "Scheduling",
-                "Pokolenie",
-                "Ocena",
+                "Population",
+                "Fitness",
                 dataset,
                 PlotOrientation.VERTICAL,
                 true,
