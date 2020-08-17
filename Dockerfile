@@ -16,6 +16,7 @@ ENV HOME /home/$NB_USER
 RUN adduser --disabled-password --gecos "Default user" --uid $NB_UID $NB_USER
 WORKDIR $HOME
 COPY . .
+RUN mvn install:install-file -Dfile=tools/validator.jar -DgroupId=pl.wroc.pwr.ii.imopse -DartifactId=validator -Dversion=1.0 -Dpackaging=jar
 RUN mvn install -T 1C
 RUN chown -R $NB_UID $HOME
 USER $NB_USER

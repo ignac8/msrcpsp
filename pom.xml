@@ -48,15 +48,12 @@
             <groupId>pl.wroc.pwr.ii.imopse</groupId>
             <artifactId>validator</artifactId>
             <version>${imopse.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/tools/validator.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>
