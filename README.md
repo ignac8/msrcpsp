@@ -16,7 +16,8 @@ This should print 127.0.0.1 like url in console that need to be copied to browse
 ## Local
 You need to have following requirements installed:
 * Jupyter Notebook
-* Java 13
+* Java 16
+* IJava
 * Maven 3
 
 Then you can run `run-local.bat` file or corresponding scripts in your console
