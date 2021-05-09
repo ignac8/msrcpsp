@@ -10,17 +10,18 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>14</maven.compiler.source>
-        <maven.compiler.target>14</maven.compiler.target>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
 
-        <jfreechart.version>1.5.0</jfreechart.version>
-        <commons-lang3.version>3.11</commons-lang3.version>
-        <lombok.version>1.18.12</lombok.version>
-        <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
+        <jfreechart.version>1.5.3</jfreechart.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <lombok.version>1.18.20</lombok.version>
         <commons-math3.version>3.6.1</commons-math3.version>
         <imopse.version>1.0</imopse.version>
-        <testng.version>7.3.0</testng.version>
+        <testng.version>7.4.0</testng.version>
+
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
     </properties>
 
     <dependencies>
