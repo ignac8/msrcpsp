@@ -1,4 +1,10 @@
-FROM buildpack-deps:buster
+FROM buildpack-deps:bullseye
+ARG PYTHON_VERSION=3.10.2
+ARG JUPYTER_NOTEBOOK_VERSION=6.4.7
+ARG JAVA_VERSION=17.0.2
+ARG JAVA_DOWNLOAD_CODE=dfd4a8d0985749f896bed50d7138ee7f
+ARG MAVEN_VERSION=3.8.4
+ARG IJAVA_VERSION=1.3.0
 
 #dependencies
 RUN apt-get update && \
@@ -16,35 +22,35 @@ rm -rf /var/lib/apt/lists/*
 
 #python
 WORKDIR /python
-RUN wget https://www.python.org/ftp/python/3.9.5/Python-3.9.5.tar.xz && \
-tar xaf Python-3.9.5.tar.xz && \
-cd Python-3.9.5 && \
+RUN wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz && \
+tar xaf Python-${PYTHON_VERSION}.tar.xz && \
+cd Python-${PYTHON_VERSION} && \
 ./configure --enable-optimizations && \
 make -j$(nproc) && \
 make install && \
 rm -rf /python
 
 #jupyter notebook
-RUN python3 -m pip install notebook
+RUN python3 -m pip install notebook==${JUPYTER_NOTEBOOK_VERSION}
 
 #java
 WORKDIR /java
-RUN wget https://download.java.net/java/GA/jdk16.0.1/7147401fd7354114ac51ef3e1328291f/9/GPL/openjdk-16.0.1_linux-x64_bin.tar.gz && \
-tar xaf openjdk-16.0.1_linux-x64_bin.tar.gz && \
-rm -f openjdk-16.0.1_linux-x64_bin.tar.gz
-ENV PATH="/java/jdk-16.0.1/bin:${PATH}"
+RUN wget https://download.java.net/java/GA/jdk${JAVA_VERSION}/${JAVA_DOWNLOAD_CODE}/8/GPL/openjdk-${JAVA_VERSION}_linux-x64_bin.tar.gz && \
+tar xaf openjdk-${JAVA_VERSION}_linux-x64_bin.tar.gz && \
+rm -f openjdk-${JAVA_VERSION}_linux-x64_bin.tar.gz
+ENV PATH="/java/jdk-${JAVA_VERSION}/bin:${PATH}"
 
 #maven
 WORKDIR /maven
-RUN wget https://ftp.man.poznan.pl/apache/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz && \
-tar xaf apache-maven-3.8.1-bin.tar.gz && \
-rm -f apache-maven-3.8.1-bin.tar.gz
-ENV PATH="/maven/apache-maven-3.8.1/bin:${PATH}"
+RUN wget https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
+tar xaf apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
+rm -f apache-maven-${MAVEN_VERSION}-bin.tar.gz
+ENV PATH="/maven/apache-maven-${MAVEN_VERSION}/bin:${PATH}"
 
 #ijava
 WORKDIR /ijava
-RUN wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip && \
-unzip ijava-1.3.0.zip && \
+RUN wget https://github.com/SpencerPark/IJava/releases/download/v${IJAVA_VERSION}/ijava-${IJAVA_VERSION}.zip && \
+unzip ijava-${IJAVA_VERSION}.zip && \
 python3 install.py --sys-prefix && \
 rm -rf /ijava
 
