@@ -3,6 +3,7 @@ services:
   msrcpsp:
     image: ignac8/msrcpsp
     container_name: msrcpsp
+    restart: always
     build: .
     ports:
       - "8888:8888"
